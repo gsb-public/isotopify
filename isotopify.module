@@ -1,0 +1,143 @@
+<?php
+
+function isotopify_theme($existing, $type , $theme, $path) {
+
+  return array(
+    'isotopify_wrapper' => array(
+      'template' => 'templates/isotopify-wrapper',
+      'file' => 'theme.inc',
+    ),
+    'isotopify_item' => array(
+      'template' => 'templates/isotopify-item',
+      'file' => 'theme.inc',
+    ),
+    'isotopify_checkboxes' => array(
+      'template' => 'templates/filters/isotopify-checkboxes',
+      'file' => 'theme.inc',
+    ),
+    'isotopify_search' => array(
+      'template' => 'templates/filters/isotopify-search',
+      'file' => 'theme.inc',
+    ),
+  );
+}
+
+function isotopify_libraries_info() {
+
+  $libraries['isotope'] = array(
+    'name' => 'isotope',
+    'vendor url' => 'http://isotope.metafizzy.co',
+    'download url' => 'http://isotope.metafizzy.co',
+    'version arguments' => array(
+      'file' => 'isotope.pkgd.js',
+      'pattern' => '@^/\*! Isotope PACKAGED v([\d\.]+) @',
+      'lines' => 2,
+    ),
+    'files' => array(
+      'js' => array(
+        'isotope.pkgd.js',
+      ),
+    ),
+    'integration files' => array(
+      'isotope' => array(
+        'js' => array(
+          'isotope.pkgd.js',
+        ),
+      ),
+    ),
+  );
+
+  return $libraries;
+}
+
+function isotopify_prepare($items, $options) {
+  drupal_add_js(libraries_get_path('isotope') . '/isotope.pkgd.js');
+  //drupal_add_js('https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.2.2/isotope.pkgd.js', 'external');
+
+  if (!empty($options['settings']['lazyLoad'])) {
+    drupal_add_js('https://cdnjs.cloudflare.com/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js', 'external');
+  }
+
+  $unique_id = drupal_html_id('isotopify');
+  drupal_add_js(array('isotopify' => array($unique_id => $options['settings'])), 'setting');
+  drupal_add_js(drupal_get_path('module', 'isotopify') . '/js/isotopify.js');
+
+  $cards = '';
+  foreach ($items as $item) {
+    $variables = array(
+      'class' => implode(' ', $item['classes']),
+      'item-id' => $item['item-id'],
+      'data' => $item['data'],
+    );
+    $cards .= theme('isotopify_item', $variables);
+  }
+
+  $form_state = array('method' => 'get', 'filters' => $options['filters'], 'redirect' => FALSE);
+
+  $form = drupal_build_form('isotopify_filters', $form_state);
+  unset($form['form_build_id']);
+  $filters = drupal_render($form);
+
+
+  $parameters = array(
+    'isotope_data' => $cards,
+    'unique_id' => $unique_id,
+    'callback' => $options['settings']['callback'],
+    'filters' => $filters,
+  );
+
+  $output = theme('isotopify_wrapper', $parameters);
+  return $output;
+}
+
+function isotopify_forms($form_id, $args) {
+  $forms['isotopify_filters'] = array(
+    'callback' => 'isotopify_filters_form',
+    'callback arguments' => $args,
+  );
+
+  return $forms;
+}
+
+function isotopify_filters_form($form, &$form_state) {
+  foreach ($form_state['filters'] as $id => $filter) {
+    switch ($filter['type']) {
+      case 'checkboxes':
+        $form['filter_' . $id] = array(
+          '#type' => 'select',
+          '#title' => $filter['title'],
+          '#options' => $filter['options'],
+          '#multiple' => true,
+          '#default_value' => !empty($form_state['values']['filter_' . $id]) ? $form_state['values']['filter_' . $id] : array(),
+        );
+        drupal_add_js(drupal_get_path('module', 'isotopify') . '/js/jquery.multiple.select.js');
+        drupal_add_css(drupal_get_path('module', 'isotopify') . '/css/multiple-select.css');
+        break;
+      case 'search':
+        $form['search']['search'] = array(
+          '#type' => 'textfield',
+          '#default_value' => !empty($form_state['values']['search']) ? $form_state['values']['search'] : '',
+          '#size' => 60,
+          '#maxlength' => 128,
+        );
+
+        if (!empty($filter['title'])) {
+          $form['search']['search']['#title'] = $filter['title'];
+        }
+
+        if (!empty($filter['placeholder'])) {
+          $form['search']['search']['#attributes']['placeholder'] = $form_state['filters']['search']['placeholder'];
+        }
+        break;
+      case 'submit':
+        // Submit Button
+        $form['submit'] = array(
+          '#type' => 'submit',
+          '#value' => $filter['title'],
+        );
+        break;
+    }
+  }
+
+  return $form;
+}
