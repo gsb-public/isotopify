@@ -4,12 +4,12 @@
  * Returns themed content for wrapper
  */
 function isotopify_preprocess_isotopify_wrapper(&$variables) {
-
+  $variables['theme_hook_suggestions'][] = 'isotopify_wrapper__' . $variables['view_id'];
 }
 
 /**
  * Returns themed content for each element
  */
 function isotopify_preprocess_isotopify_item(&$variables) {
-
+  $variables['theme_hook_suggestions'][] = 'isotopify_item__' . $variables['view_id'];
 }

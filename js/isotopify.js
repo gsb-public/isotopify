@@ -2,12 +2,26 @@
   Drupal.behaviors.isotopify = {
     attach: function (context, settings) {
       $('.isotopify').each(function(index) {
-        var uniqueID = $(this).attr('id');
-
+        $this = $(this);
+        var uniqueID = $this.attr('id');
         var settings = Drupal.settings.isotopify[uniqueID];
-        var $isotopeWrapper = $(this).find('.isotopify-wrapper');
+        var $isotopifyFilters = $this.find('.isotopify-filters');
+        var $isotopifyFilterCheckboxes = $isotopifyFilters.find('select.isotopify-filter-checkboxes');
+        var $isotopeWrapper = $this.find('.isotopify-wrapper');
 
+        // Remove unused filter options
+        $isotopifyFilterCheckboxes.each(function() {
+          $select = $(this);
+          filterID = $select.data('isotopify-id');
+          $select.find('option').each(function() {
+            $option = $(this);
+            if (!$isotopeWrapper.find('.filter--' + filterID + '--' + $option.val()).length) {
+              $option.remove();
+            }
+          });
+        });
 
+        // handle lazy load
         if (typeof settings.lazyLoad !== 'undefined' && settings.lazyLoad) {
           var $imgs = $isotopeWrapper.find('img');
 
@@ -16,21 +30,21 @@
           });
         }
 
+        // Enable isotope
         Drupal.settings.isotopify[uniqueID].grid = $isotopeWrapper.isotope({
           itemSelector: settings.itemSelector,
           layoutMode: 'fitRows'
         });
 
+        // Add scroll event for lazyload
         Drupal.settings.isotopify[uniqueID].grid.on('layoutComplete', function() {
           $(window).trigger("scroll");
         });
 
-        $isotopifyFilters = $(this).find('.isotopify-filters');
-
         /**
          * Handle Checkboxes
          */
-        $isotopifyFilters.find('.form-select').multipleSelect({
+        $isotopifyFilterCheckboxes.multipleSelect({
           width: 180,
           maxHeight: 300,
           selectAll: false,
@@ -39,22 +53,26 @@
           minimumCountSelected: 0
         });
 
-        $(this).find('.isotopify-filters .isotopify-checkboxes input').click(function(e) {
+        $isotopifyFilterCheckboxes.change(function(e) {
           Drupal.isotopify.update(uniqueID);
         });
+
 
         /**
          * Handle Search Filter
          */
+        var $isotopifySearchInput = $isotopifyFilters.find('[name=search]');
+        var $isotopifySearchButton = $isotopifyFilters.find('input.form-submit');
         Drupal.settings.isotopify[uniqueID].searchResults = '';
 
-        $isotopifySearch = $(this).find('.isotopify-search');
-        $isotopifySearch.find('#edit-submit').click(function(e) {
+
+        $isotopifySearchButton.click(function(e) {
           e.preventDefault();
 
-          var text = $isotopifySearch.find('#edit-search').val();
+          var text = $isotopifySearchInput.val();
 
           if (text.length) {
+            console.log(settings);
             $.getJSON(settings.callback + "/" + text, function(data) {
               Drupal.settings.isotopify[uniqueID].searchResults = data;
               Drupal.isotopify.update(uniqueID);
@@ -84,16 +102,20 @@
        * Filter Checkboxes
        */
       checkboxesTest = true;
-      $('#' + uniqueID + ' .isotopify-checkboxes').each(function() {
+      $('#' + uniqueID + ' select.isotopify-filter-checkboxes').each(function() {
+        $select = $(this);
         checkboxTest = false;
-        $checkboxes = $(this).find('input:checked');
+        $options = $select.find(':selected');
+        var selectID = $select.data('isotopify-id');
 
         // If nothing is checked then assume that it's true.
-        if ($checkboxes.length) {
-          // Loop through all checked items. If any of them are a match then the
+        if ($options.length) {
+          // Loop through all the selected options. If any of them are a match then the
           // whole thing is true.
-          $checkboxes.each(function() {
-            if ($this.hasClass($(this).val())) {
+          $options.each(function() {
+            $option = $(this);
+            filterID = $option.val();
+            if ($this.hasClass('filter--' + selectID + '--' + filterID)) {
               checkboxTest = true;
               return false;
             }
@@ -109,7 +131,7 @@
       /**
        * Filter search
        */
-      var nid = $(this).data('nid');
+      var nid = $this.data('nid');
       searchTest = true;
       if (Drupal.settings.isotopify[uniqueID].searchResults.length && $.inArray(nid.toString(), Drupal.settings.isotopify[uniqueID].searchResults) == -1) {
         searchTest = false;

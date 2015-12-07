@@ -63,12 +63,33 @@ function isotopify_prepare($items, $options) {
   drupal_add_js(drupal_get_path('module', 'isotopify') . '/js/isotopify.js');
 
   $cards = '';
-  foreach ($items as $item) {
+  foreach ($items as $item) {;
+    $classes = array();
+    if (!empty($item['classes'])) {
+      $classes += $item['classes'];
+    }
+
+    if (!empty($item['filters'])) {
+      //dpm($item['filters']);
+      foreach ($item['filters'] as $key => $values) {
+        foreach ($values as $value) {
+          $classes[] = drupal_html_class('filter--' . $key . '--' . $value);
+        }
+      }
+    }
+
     $variables = array(
-      'class' => implode(' ', $item['classes']),
+      'class' => implode(' ', $classes),
       'item-id' => $item['item-id'],
+      'view_id' => $options['id'],
       'data' => $item['data'],
+      'filters' => array(),
     );
+
+    if (!empty($item['filters'])) {
+      $variables['filters'] = $item['filters'];
+    }
+
     $cards .= theme('isotopify_item', $variables);
   }
 
@@ -82,6 +103,7 @@ function isotopify_prepare($items, $options) {
   $parameters = array(
     'isotope_data' => $cards,
     'unique_id' => $unique_id,
+    'view_id' => $options['id'],
     'callback' => $options['settings']['callback'],
     'filters' => $filters,
   );
@@ -107,6 +129,10 @@ function isotopify_filters_form($form, &$form_state) {
           '#type' => 'select',
           '#title' => $filter['title'],
           '#options' => $filter['options'],
+          '#attributes' => array(
+            'class' => array('isotopify-filter-checkboxes'),
+            'data-isotopify-id' => drupal_html_class($id),
+          ),
           '#multiple' => true,
           '#default_value' => !empty($form_state['values']['filter_' . $id]) ? $form_state['values']['filter_' . $id] : array(),
         );
