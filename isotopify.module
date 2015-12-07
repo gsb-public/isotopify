@@ -52,7 +52,6 @@ function isotopify_libraries_info() {
 
 function isotopify_prepare($items, $options) {
   drupal_add_js(libraries_get_path('isotope') . '/isotope.pkgd.js');
-  //drupal_add_js('https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/2.2.2/isotope.pkgd.js', 'external');
 
   if (!empty($options['settings']['lazyLoad'])) {
     drupal_add_js('https://cdnjs.cloudflare.com/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js', 'external');
@@ -70,7 +69,6 @@ function isotopify_prepare($items, $options) {
     }
 
     if (!empty($item['filters'])) {
-      //dpm($item['filters']);
       foreach ($item['filters'] as $key => $values) {
         foreach ($values as $value) {
           $classes[] = drupal_html_class('filter--' . $key . '--' . $value);
