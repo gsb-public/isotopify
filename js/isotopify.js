@@ -7,21 +7,18 @@
         var settings = Drupal.settings.isotopify[uniqueID];
         var $isotopifyFilters = $this.find('.isotopify-filters');
         var $isotopifyFilterCheckboxes = $isotopifyFilters.find('select.isotopify-filter-checkboxes');
+        var $isotopifySort = $isotopifyFilters.find('.isotopify-filter-sort');
         var $isotopeWrapper = $this.find('.isotopify-wrapper');
 
-        // Remove unused filter options
-        $isotopifyFilterCheckboxes.each(function() {
-          $select = $(this);
-          filterID = $select.data('isotopify-id');
-          $select.find('option').each(function() {
-            $option = $(this);
-            if (!$isotopeWrapper.find('.filter--' + filterID + '--' + $option.val()).length) {
-              $option.remove();
-            }
-          });
-        });
+        // Define default properties for isotope
+        isotopeProperties = {
+          itemSelector: settings.itemSelector,
+          layoutMode: 'fitRows'
+        }
 
-        // handle lazy load
+        /**
+         * Load Lazy Load if needed
+         */
         if (typeof settings.lazyLoad !== 'undefined' && settings.lazyLoad) {
           var $imgs = $isotopeWrapper.find('img');
 
@@ -30,59 +27,101 @@
           });
         }
 
-        // Enable isotope
-        Drupal.settings.isotopify[uniqueID].grid = $isotopeWrapper.isotope({
-          itemSelector: settings.itemSelector,
-          layoutMode: 'fitRows'
-        });
+        /**
+         * Handle Sorting
+         */
+        if ($isotopifySort.length) {
+          var sortData = {};
+          $isotopifySort.find('option').each(function() {
+            $option = $(this);
+            var key = $option.val();
+            sortData[key] = '[data-sort-' + key + ']';
+          });
 
-        // Add scroll event for lazyload
-        Drupal.settings.isotopify[uniqueID].grid.on('layoutComplete', function() {
-          $(window).trigger("scroll");
-        });
+          isotopeProperties.getSortData = sortData;
+
+          $isotopifySort.change(function() {
+            $sort = $(this);
+            value = $sort.val();
+            Drupal.settings.isotopify[uniqueID].grid.isotope({
+              sortBy: value
+            })
+          });
+        }
+
+        // Enable isotope
+        Drupal.settings.isotopify[uniqueID].grid = $isotopeWrapper.isotope(isotopeProperties);
+
+        /**
+         * Handle scroll event for lazy load.
+         */
+        if (typeof settings.lazyLoad !== 'undefined' && settings.lazyLoad) {
+          // Add scroll event for lazyload
+          Drupal.settings.isotopify[uniqueID].grid.on('layoutComplete', function () {
+            $(window).trigger("scroll");
+          });
+        }
 
         /**
          * Handle Checkboxes
          */
-        $isotopifyFilterCheckboxes.multipleSelect({
-          width: 180,
-          maxHeight: 300,
-          selectAll: false,
-          //multiple: true,
-          //multipleWidth: 220,
-          minimumCountSelected: 0
-        });
+        if ($isotopifyFilterCheckboxes.length) {
+          // Remove unused filter options. This needs to ru
+          $isotopifyFilterCheckboxes.each(function() {
+            $select = $(this);
+            filterID = $select.data('isotopify-id');
+            $select.find('option').each(function() {
+              $option = $(this);
+              if (!$isotopeWrapper.find('.filter--' + filterID + '--' + $option.val()).length) {
+                $option.remove();
+              }
+            });
+          });
 
-        $isotopifyFilterCheckboxes.change(function(e) {
-          Drupal.isotopify.update(uniqueID);
-        });
+          // Add the multipleSelect library
+          $isotopifyFilterCheckboxes.multipleSelect({
+            width: 180,
+            maxHeight: 300,
+            selectAll: false,
+            //multiple: true,
+            //multipleWidth: 220,
+            minimumCountSelected: 0
+          });
 
+          // Add an on change event
+          $isotopifyFilterCheckboxes.change(function(e) {
+            Drupal.isotopify.update(uniqueID);
+          });
+        }
 
         /**
          * Handle Search Filter
          */
         var $isotopifySearchInput = $isotopifyFilters.find('[name=search]');
-        var $isotopifySearchButton = $isotopifyFilters.find('input.form-submit');
-        Drupal.settings.isotopify[uniqueID].searchResults = '';
 
+        if ($isotopifySearchInput.length) {
+          var $isotopifySearchButton = $isotopifyFilters.find('input.form-submit');
+          Drupal.settings.isotopify[uniqueID].searchResults = '';
 
-        $isotopifySearchButton.click(function(e) {
-          e.preventDefault();
+          $isotopifySearchButton.click(function(e) {
+            e.preventDefault();
 
-          var text = $isotopifySearchInput.val();
+            var text = $isotopifySearchInput.val();
 
-          if (text.length) {
-            console.log(settings);
-            $.getJSON(settings.callback + "/" + text, function(data) {
-              Drupal.settings.isotopify[uniqueID].searchResults = data;
+            if (text.length) {
+              console.log(settings);
+              $.getJSON(settings.callback + "/" + text, function(data) {
+                Drupal.settings.isotopify[uniqueID].searchResults = data;
+                Drupal.isotopify.update(uniqueID);
+              });
+            }
+            else {
+              Drupal.settings.isotopify[uniqueID].searchResults = '';
               Drupal.isotopify.update(uniqueID);
-            });
-          }
-          else {
-            Drupal.settings.isotopify[uniqueID].searchResults = '';
-            Drupal.isotopify.update(uniqueID);
-          }
-        });
+            }
+          });
+        }
+
       });
     }
   };

@@ -11,5 +11,9 @@ function isotopify_preprocess_isotopify_wrapper(&$variables) {
  * Returns themed content for each element
  */
 function isotopify_preprocess_isotopify_item(&$variables) {
+  $variables['data_attributes'] = 'data-nid="' . $variables['item-id'] . '"';
+  foreach ($variables['sort'] as $key => $value) {
+    $variables['data_attributes'] .= ' data-sort-' . $key . '="' . $value . '"';
+  }
   $variables['theme_hook_suggestions'][] = 'isotopify_item__' . $variables['view_id'];
 }

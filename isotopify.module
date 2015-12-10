@@ -82,29 +82,33 @@ function isotopify_prepare($items, $options) {
       'view_id' => $options['id'],
       'data' => $item['data'],
       'filters' => array(),
+      'sort' => array(),
     );
 
     if (!empty($item['filters'])) {
       $variables['filters'] = $item['filters'];
     }
 
+    if (!empty($item['sort'])) {
+      $variables['sort'] = $item['sort'];
+    }
+
     $cards .= theme('isotopify_item', $variables);
   }
-
-  $form_state = array('method' => 'get', 'filters' => $options['filters'], 'redirect' => FALSE);
-
-  $form = drupal_build_form('isotopify_filters', $form_state);
-  unset($form['form_build_id']);
-  $filters = drupal_render($form);
-
 
   $parameters = array(
     'isotope_data' => $cards,
     'unique_id' => $unique_id,
     'view_id' => $options['id'],
     'callback' => $options['settings']['callback'],
-    'filters' => $filters,
   );
+
+  if (!empty($options['filters'])) {
+    $form_state = array('method' => 'get', 'filters' => $options['filters'], 'redirect' => FALSE);
+    $form = drupal_build_form('isotopify_filters', $form_state);
+    unset($form['form_build_id']);
+    $parameters['filters'] = drupal_render($form);
+  }
 
   $output = theme('isotopify_wrapper', $parameters);
   return $output;
@@ -158,6 +162,20 @@ function isotopify_filters_form($form, &$form_state) {
         $form['submit'] = array(
           '#type' => 'submit',
           '#value' => $filter['title'],
+        );
+        break;
+      case 'sort':
+        $sort_default = !empty($filter['default']) ? $filter['default'] : array_pop($filter['options']);
+        $form['sort'] = array(
+          '#type' => 'select',
+          '#title' => $filter['title'],
+          '#options' => $filter['options'],
+          '#required' => TRUE,
+          '#attributes' => array(
+            'class' => array('isotopify-filter-sort'),
+            'data-isotopify-id' => drupal_html_class($id),
+          ),
+          '#default_value' => !empty($form_state['values']['sort']) ? $form_state['values']['sort'] : $sort_default,
         );
         break;
     }

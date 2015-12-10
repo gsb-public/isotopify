@@ -1,3 +1,3 @@
-<div class="isotopify-item <?php print $class; ?>" data-nid="<?php print $variables['item-id']; ?>">
+<div class="isotopify-item <?php print $class; ?>" <?php print $data_attributes; ?>>
   <?php print $data; ?>
 </div>
