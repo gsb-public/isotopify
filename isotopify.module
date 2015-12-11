@@ -54,7 +54,7 @@ function isotopify_prepare($items, $options) {
   drupal_add_js(libraries_get_path('isotope') . '/isotope.pkgd.js');
 
   if (!empty($options['settings']['lazyLoad'])) {
-    drupal_add_js('https://cdnjs.cloudflare.com/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js', 'external');
+    drupal_add_js(libraries_get_path('jquery_lazyload') . '/jquery.lazyload.min.js');
   }
 
   $unique_id = drupal_html_id('isotopify');
