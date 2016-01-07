@@ -7,6 +7,7 @@
         var settings = Drupal.settings.isotopify[uniqueID];
         var $isotopifyFilters = $this.find('.isotopify-filters');
         var $isotopifyFilterCheckboxes = $isotopifyFilters.find('select.isotopify-filter-checkboxes');
+        var $isotopifyFilterDateRange = $isotopifyFilters.find('.isotopify-filter-daterange');
         var $isotopifySort = $isotopifyFilters.find('.isotopify-filter-sort');
         var $isotopeWrapper = $this.find('.isotopify-wrapper');
 
@@ -122,6 +123,75 @@
           });
         }
 
+        /**
+         * Handle daterange
+         */
+        if ($isotopifyFilterDateRange.length) {
+
+          // Add the button to the page.
+          title = $isotopifyFilterDateRange.data('title');
+          var $isotopifyFilterDateRangeButton = $('<button class="isotopify-filter-daterange-button">' + title + '</button>');
+          $isotopifyFilterDateRange.append($isotopifyFilterDateRangeButton);
+
+          $isotopifyFilterDateRangeButton.click(function(e) {
+            e.preventDefault();
+          });
+
+          $isotopifyFilterDateRange.find('.form-type-textfield').hide();
+
+          var minDate = '2015-10-01';
+          var maxDate = '2016-10-01';
+          $isotopifyFilterDateRangeButton.dateRangePicker({
+            startDate: minDate,
+            endDate: maxDate,
+            customTopBar: 'Select a date range',
+            hoveringTooltip: false,
+            setValue: function(s) {
+            }
+          }).bind('datepicker-apply',function(event,obj) {
+            if (obj.value == '1969-12-31 to 1969-12-31' || obj.date1 == 'Invalid Date' || obj.date2 == 'Invalid Date') {
+              settings.beginDateRange = '';
+              settings.endDateRange = '';
+              $isotopifyFilterDateRangeButton.data('dateRangePicker').clear();
+            }
+            else {
+              /* This event will be triggered when user clicks on the apply button */
+              var date1 = new Date(obj.date1);
+              var date1Year = date1.getFullYear();
+              var date1YearStr = date1Year.toString();
+              var date1Month = date1.getMonth() + 1;
+              var date1MonthStr = date1Month.toString();
+              if (date1MonthStr.length == 1) {
+                date1MonthStr = '0' + date1MonthStr;
+              }
+              var date1Day = date1.getDate();
+              var date1DayStr = date1Day.toString();
+              if (date1DayStr.length == 1) {
+                date1DayStr = '0' + date1DayStr;
+              }
+              settings.beginDateRange = date1YearStr + date1MonthStr + date1DayStr;
+
+              var date2 = new Date(obj.date2);
+              var date2Year = date2.getFullYear();
+              var date2YearStr = date2Year.toString();
+              var date2Month = date2.getMonth() + 1;
+              var date2MonthStr = date2Month.toString();
+              if (date2MonthStr.length == 1) {
+                date2MonthStr = '0' + date2MonthStr;
+              }
+              var date2Day = date2.getDate();
+              var date2DayStr = date2Day.toString();
+              if (date2DayStr.length == 1) {
+                date2DayStr = '0' + date2DayStr;
+              }
+
+              settings.endDateRange = date2YearStr + date2MonthStr + date2DayStr;
+            }
+
+            Drupal.isotopify.update(uniqueID);
+          });
+        }
+
       });
     }
   };
@@ -136,7 +206,7 @@
   Drupal.isotopify.update = function(uniqueID) {
     Drupal.settings.isotopify[uniqueID].grid.isotope({filter: function() {
       $this = $(this);
-
+      var settings = Drupal.settings.isotopify[uniqueID];
       /**
        * Filter Checkboxes
        */
@@ -167,6 +237,22 @@
         checkboxesTest = checkboxesTest && checkboxTest;
       });
 
+
+      /**
+       * Filter date range
+       */
+      daterangeTest = true;
+      console.log(settings.beginDateRange);
+      console.log(settings.endDateRange);
+      if (settings.beginDateRange.length && settings.endDateRange.length) {
+        if ($this.data('daterange') >= settings.beginDateRange && $this.data('daterange') >= settings.endDateRange) {
+          daterangeTest = true;
+        }
+        else {
+          daterangeTest = false;
+        }
+      }
+
       /**
        * Filter search
        */
@@ -177,7 +263,7 @@
       }
 
       // Return the result of those tests.
-      return checkboxesTest && searchTest;
+      return checkboxesTest && daterangeTest && searchTest;
     }});
   }
 })(jQuery);

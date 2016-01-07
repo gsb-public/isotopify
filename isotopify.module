@@ -47,6 +47,38 @@ function isotopify_libraries_info() {
     ),
   );
 
+  $libraries['jquery-date-range-picker'] = array(
+    'name' => 'jquery-date-range-picker',
+    'vendor url' => 'https://github.com/longbill/jquery-date-range-picker',
+    'download url' => 'https://github.com/longbill/jquery-date-range-picker',
+    'version arguments' => array(
+      'file' => 'isotope.pkgd.js',
+      'pattern' => '@^/\*! version : ([\d\.]+) @',
+      'lines' => 2,
+    ),
+    'files' => array(
+      'js' => array(
+        'jquery.daterangepicker.js',
+      ),
+      'css' => array(
+        'daterangepicker.css',
+      )
+    ),
+    'integration files' => array(
+      'isotope' => array(
+        'js' => array(
+          'jquery.daterangepicker.js',
+        ),
+        'css' => array(
+          'daterangepicker.css',
+        )
+      ),
+    ),
+    'dependencies' => array(
+      'moment',
+    ),
+  );
+
   return $libraries;
 }
 
@@ -163,6 +195,38 @@ function isotopify_filters_form($form, &$form_state) {
           '#type' => 'submit',
           '#value' => $filter['title'],
         );
+        break;
+      case 'date range':
+        $title = !empty($filter['title']) ? $filter['title'] : 'Select Date Range';
+        $form['date_range'] = array(
+          '#type' => 'container',
+          '#attributes' => array(
+            'class' => array('isotopify-filter-daterange'),
+            'data-title' => $title,
+          ),
+          'date_range_from' => array(
+            '#type' => 'textfield',
+            '#title' => $filter['date_from_title'],
+            '#default_value' => '',
+            '#attributes' => array(
+              'class' => array('date-range-field'),
+            ),
+          ),
+          'date_range_to' => array(
+            '#type' => 'textfield',
+            '#title' => $filter['date_to_title'],
+            '#default_value' => '',
+            '#attributes' => array(
+              'class' => array('date-range-field'),
+            ),
+          ),
+        );
+        //$form['date_range'] = array(
+        //  '#markup' => '<span class="isotopify-filter-daterange">' . $title . '</span>',
+        //);
+        drupal_add_js(libraries_get_path('moment') . '/moment.js');
+        drupal_add_js(libraries_get_path('jquery-date-range-picker') . '/jquery.daterangepicker.js');
+        drupal_add_css(libraries_get_path('jquery-date-range-picker') . '/daterangepicker.css');
         break;
       case 'sort':
         $sort_default = !empty($filter['default']) ? $filter['default'] : array_pop($filter['options']);
