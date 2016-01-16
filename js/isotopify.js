@@ -110,7 +110,6 @@
             var text = $isotopifySearchInput.val();
 
             if (text.length) {
-              console.log(settings);
               $.getJSON(settings.callback + "/" + text, function(data) {
                 Drupal.settings.isotopify[uniqueID].searchResults = data;
                 Drupal.isotopify.update(uniqueID);
@@ -126,6 +125,8 @@
         /**
          * Handle daterange
          */
+        settings.beginDateRange = '';
+        settings.endDateRange = '';
         if ($isotopifyFilterDateRange.length) {
 
           // Add the button to the page.
@@ -150,8 +151,8 @@
             }
           }).bind('datepicker-apply',function(event,obj) {
             if (obj.value == '1969-12-31 to 1969-12-31' || obj.date1 == 'Invalid Date' || obj.date2 == 'Invalid Date') {
-              settings.beginDateRange = '';
-              settings.endDateRange = '';
+              //settings.beginDateRange = '';
+              //settings.endDateRange = '';
               $isotopifyFilterDateRangeButton.data('dateRangePicker').clear();
             }
             else {
@@ -242,10 +243,10 @@
        * Filter date range
        */
       daterangeTest = true;
-      console.log(settings.beginDateRange);
-      console.log(settings.endDateRange);
+      //console.log(settings.beginDateRange);
+      //console.log(settings.endDateRange);
       if (settings.beginDateRange.length && settings.endDateRange.length) {
-        if ($this.data('daterange') >= settings.beginDateRange && $this.data('daterange') >= settings.endDateRange) {
+        if ($this.data('daterange') >= settings.beginDateRange && $this.data('daterange') <= settings.endDateRange) {
           daterangeTest = true;
         }
         else {
