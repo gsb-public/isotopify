@@ -99,8 +99,14 @@ function isotopify_prepare($items, $options) {
     if (!empty($item['classes'])) {
       $classes += $item['classes'];
     }
-
+    $daterange = '';
     if (!empty($item['filters'])) {
+
+      if (!empty($item['filters']['daterange'])) {
+                $daterange = $item['filters']['daterange'];
+                unset($item['filters']['daterange']);
+      }
+
       foreach ($item['filters'] as $key => $values) {
         foreach ($values as $value) {
           $classes[] = drupal_html_class('filter--' . $key . '--' . $value);
@@ -116,7 +122,9 @@ function isotopify_prepare($items, $options) {
       'filters' => array(),
       'sort' => array(),
     );
-
+    if (!empty($daterange)) {
+            $variables['daterange'] = $daterange[0];
+    }
     if (!empty($item['filters'])) {
       $variables['filters'] = $item['filters'];
     }
