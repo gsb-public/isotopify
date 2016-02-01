@@ -101,6 +101,9 @@
               var isotopifyID = $select.data('isotopify-id');
               settings.filter.checkboxes[isotopifyID] = choices;
 
+              // Hide the dropdown.
+              $select.parent().find('button.ms-choice').click();
+
               Drupal.isotopify.update(uniqueID);
             });
 
