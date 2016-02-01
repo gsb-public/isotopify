@@ -101,10 +101,9 @@ function isotopify_prepare($items, $options) {
     }
     $daterange = '';
     if (!empty($item['filters'])) {
-
       if (!empty($item['filters']['daterange'])) {
-                $daterange = $item['filters']['daterange'];
-                unset($item['filters']['daterange']);
+        $daterange = $item['filters']['daterange'];
+        unset($item['filters']['daterange']);
       }
 
       foreach ($item['filters'] as $key => $values) {
@@ -123,7 +122,7 @@ function isotopify_prepare($items, $options) {
       'sort' => array(),
     );
     if (!empty($daterange)) {
-            $variables['daterange'] = $daterange[0];
+      $variables['daterange'] = $daterange[0];
     }
     if (!empty($item['filters'])) {
       $variables['filters'] = $item['filters'];
@@ -167,17 +166,22 @@ function isotopify_filters_form($form, &$form_state) {
   foreach ($form_state['filters'] as $id => $filter) {
     switch ($filter['type']) {
       case 'checkboxes':
+        $classes = array('isotopify-filter-checkboxes');
+        if (!empty($filter['multiple'])) {
+          $classes[] = 'isotopify-multiple';
+        }
         $form['filter_' . $id] = array(
           '#type' => 'select',
           '#title' => $filter['title'],
           '#options' => $filter['options'],
           '#attributes' => array(
-            'class' => array('isotopify-filter-checkboxes'),
+            'class' => $classes,
             'data-isotopify-id' => drupal_html_class($id),
           ),
           '#multiple' => true,
           '#default_value' => !empty($form_state['values']['filter_' . $id]) ? $form_state['values']['filter_' . $id] : array(),
         );
+
         drupal_add_js(drupal_get_path('module', 'isotopify') . '/js/jquery.multiple.select.js');
         drupal_add_css(drupal_get_path('module', 'isotopify') . '/css/multiple-select.css');
         break;

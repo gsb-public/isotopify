@@ -5,6 +5,8 @@
         $this = $(this);
         var uniqueID = $this.attr('id');
         var settings = Drupal.settings.isotopify[uniqueID];
+        settings.filter = settings.filter || {};
+        settings.filter.checkboxes = settings.filter.checkboxes || {};
         var $isotopifyFilters = $this.find('.isotopify-filters');
         var $isotopifyFilterCheckboxes = $isotopifyFilters.find('select.isotopify-filter-checkboxes');
         var $isotopifyFilterDateRange = $isotopifyFilters.find('.isotopify-filter-daterange');
@@ -69,7 +71,7 @@
         if ($isotopifyFilterCheckboxes.length) {
           // Remove unused filter options. This needs to ru
           $isotopifyFilterCheckboxes.each(function() {
-            $select = $(this);
+            var $select = $(this);
             filterID = $select.data('isotopify-id');
             $select.find('option').each(function() {
               $option = $(this);
@@ -77,21 +79,39 @@
                 $option.remove();
               }
             });
-          });
 
-          // Add the multipleSelect library
-          $isotopifyFilterCheckboxes.multipleSelect({
-            width: 180,
-            maxHeight: 300,
-            selectAll: false,
-            //multiple: true,
-            //multipleWidth: 220,
-            minimumCountSelected: 0
-          });
+            var multipleSelectOptions = {
+              width: 180,
+              maxHeight: 300,
+              selectAll: false,
+              minimumCountSelected: 0
+            }
 
-          // Add an on change event
-          $isotopifyFilterCheckboxes.change(function(e) {
-            Drupal.isotopify.update(uniqueID);
+            if ($select.hasClass('isotopify-multiple')) {
+              multipleSelectOptions.multiple = true;
+              multipleSelectOptions.multipleWidth = 220;
+            }
+
+            // Add the multipleSelect library
+            $select.multipleSelect(multipleSelectOptions);
+
+            var $applyButton = $('<button class="checkbox-apply">Apply</button>').click(function(e) {
+              e.preventDefault();
+              var choices = $select.multipleSelect("getSelects");
+              var isotopifyID = $select.data('isotopify-id');
+              settings.filter.checkboxes[isotopifyID] = choices;
+
+              Drupal.isotopify.update(uniqueID);
+            });
+
+            var $clearAllButton = $('<button class="checkbox-clear-all">Clear All</button>').click(function(e) {
+              e.preventDefault();
+              $select.multipleSelect('uncheckAll');
+            });
+
+            var $dropdown = $select.next().find('.ms-drop');
+            $dropdown.append($applyButton);
+            $dropdown.append($clearAllButton);
           });
         }
 
@@ -211,40 +231,34 @@
       /**
        * Filter Checkboxes
        */
-      checkboxesTest = true;
-      $('#' + uniqueID + ' select.isotopify-filter-checkboxes').each(function() {
-        $select = $(this);
-        checkboxTest = false;
-        $options = $select.find(':selected');
-        var selectID = $select.data('isotopify-id');
+      var checkboxTest = true;
 
-        // If nothing is checked then assume that it's true.
-        if ($options.length) {
-          // Loop through all the selected options. If any of them are a match then the
-          // whole thing is true.
-          $options.each(function() {
-            $option = $(this);
-            filterID = $option.val();
-            if ($this.hasClass('filter--' + selectID + '--' + filterID)) {
-              checkboxTest = true;
-              return false;
-            }
-          });
-        }
-        else {
-          checkboxTest = true;
+      // Loop through all the selections
+      for (var id in settings.filter.checkboxes) {
+
+        // If the filter is empty skip it.
+        if (!settings.filter.checkboxes[id].length) {
+          continue;
         }
 
-        checkboxesTest = checkboxesTest && checkboxTest;
-      });
+        // Test the values in a single dropdown. This is an OR test. If any one
+        // of them work we can skip testing the rest.
+        var singleDropdownTest = false;
+        for (var key in settings.filter.checkboxes[id]) {
+          if ($this.hasClass('filter--' + id + '--' + settings.filter.checkboxes[id][key])) {
+            singleDropdownTest = true;
+            break;
+          }
+        }
+
+        checkboxTest = checkboxTest && singleDropdownTest;
+      }
 
 
       /**
        * Filter date range
        */
       daterangeTest = true;
-      //console.log(settings.beginDateRange);
-      //console.log(settings.endDateRange);
       if (settings.beginDateRange.length && settings.endDateRange.length) {
         if ($this.data('daterange') >= settings.beginDateRange && $this.data('daterange') <= settings.endDateRange) {
           daterangeTest = true;
@@ -264,7 +278,7 @@
       }
 
       // Return the result of those tests.
-      return checkboxesTest && daterangeTest && searchTest;
+      return checkboxTest && daterangeTest && searchTest;
     }});
   }
 })(jQuery);
