@@ -195,7 +195,6 @@
           $isotopifyFilterDateRangeButton.dateRangePicker({
             startDate: minDateFormatted,
             endDate: maxDateFormatted,
-            customTopBar: 'Select a date range',
             hoveringTooltip: false,
             setValue: function(s) {
             }
@@ -214,7 +213,25 @@
             }
 
             Drupal.isotopify.update(uniqueID);
+          }).click(function(e) { // Close picker if the button is clicked when it's opened
+            e.preventDefault();
+            if ($(this).hasClass('open')) {
+              $(this).data('dateRangePicker').close();
+            }
+          }).bind('datepicker-opened',function() { // Add classes when the picker is opened
+            $(this).removeClass('closed');
+            $(this).addClass('open');
+          }).bind('datepicker-closed',function() { // Add classes when the picker is closed
+            $(this).removeClass('open');
+            $(this).addClass('closed');
           });
+
+          // Move the close button.
+          var $topBar = $('.date-picker-wrapper .drp_top-bar').detach();
+          $topBar.find('.apply-btn').val(Drupal.t('Done'));
+          $topBar.find('.default-top').hide();
+          $('.date-picker-wrapper').append($topBar);
+
         }
       });
     }
