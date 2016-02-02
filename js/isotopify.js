@@ -164,11 +164,37 @@
 
           $isotopifyFilterDateRange.find('.form-type-textfield').hide();
 
-          var minDate = '2015-10-01';
-          var maxDate = '2016-10-01';
+          // Get the current range
+          var minDate = null;
+          var maxDate = null;
+          $isotopeWrapper.find('.isotopify-item').each(function() {
+            var $item = $(this);
+            if ($item.data('daterange') != 19691231) {
+              if (minDate == null || parseInt($item.data('daterange')) < minDate) {
+                minDate = parseInt($item.data('daterange'));
+              }
+
+              if (maxDate == null || parseInt($item.data('daterange')) > maxDate) {
+                maxDate = parseInt($item.data('daterange'));
+              }
+            }
+          });
+
+          var minDateFormatted = minDate.toString().substr(0, 4) + '-' + minDate.toString().substr(4, 2) + '-' + minDate.toString().substr(6, 2);
+          var minDateObj = new Date(minDateFormatted);
+          minDateObj.setMonth(minDateObj.getMonth()-1);
+          minDate = Drupal.isotopify.convertDateObj(minDateObj);
+          minDateFormatted = minDate.substr(0, 4) + '-' + minDate.substr(4, 2) + '-' + minDate.substr(6, 2);
+
+          var maxDateFormatted = maxDate.toString().substr(0, 4) + '-' + maxDate.toString().substr(4, 2) + '-' + maxDate.toString().substr(6, 2);
+          var maxDateObj = new Date(maxDateFormatted);
+          maxDateObj.setMonth(maxDateObj.getMonth()+1);
+          maxDate = Drupal.isotopify.convertDateObj(maxDateObj);
+          maxDateFormatted = maxDate.substr(0, 4) + '-' + maxDate.substr(4, 2) + '-' + maxDate.substr(6, 2);
+
           $isotopifyFilterDateRangeButton.dateRangePicker({
-            startDate: minDate,
-            endDate: maxDate,
+            startDate: minDateFormatted,
+            endDate: maxDateFormatted,
             customTopBar: 'Select a date range',
             hoveringTooltip: false,
             setValue: function(s) {
@@ -180,35 +206,9 @@
             else {
               /* This event will be triggered when user clicks on the apply button */
               var date1 = new Date(obj.date1);
-              var date1Year = date1.getFullYear();
-              var date1YearStr = date1Year.toString();
-              var date1Month = date1.getMonth() + 1;
-              var date1MonthStr = date1Month.toString();
-              if (date1MonthStr.length == 1) {
-                date1MonthStr = '0' + date1MonthStr;
-              }
-              var date1Day = date1.getDate();
-              var date1DayStr = date1Day.toString();
-              if (date1DayStr.length == 1) {
-                date1DayStr = '0' + date1DayStr;
-              }
-              var beginDateRange = date1YearStr + date1MonthStr + date1DayStr;
-
+              var beginDateRange = Drupal.isotopify.convertDateObj(date1);
               var date2 = new Date(obj.date2);
-              var date2Year = date2.getFullYear();
-              var date2YearStr = date2Year.toString();
-              var date2Month = date2.getMonth() + 1;
-              var date2MonthStr = date2Month.toString();
-              if (date2MonthStr.length == 1) {
-                date2MonthStr = '0' + date2MonthStr;
-              }
-              var date2Day = date2.getDate();
-              var date2DayStr = date2Day.toString();
-              if (date2DayStr.length == 1) {
-                date2DayStr = '0' + date2DayStr;
-              }
-
-              var endDateRange = date2YearStr + date2MonthStr + date2DayStr;
+              var endDateRange = Drupal.isotopify.convertDateObj(date2);
 
               Drupal.isotopify.setFilter.daterange(uniqueID, beginDateRange, endDateRange);
             }
@@ -216,12 +216,27 @@
             Drupal.isotopify.update(uniqueID);
           });
         }
-
       });
     }
   };
 
   Drupal.isotopify = Drupal.isotopify || {};
+
+  Drupal.isotopify.convertDateObj = function(date) {
+    var dateYear = date.getFullYear();
+    var dateYearStr = dateYear.toString();
+    var dateMonth = date.getMonth() + 1;
+    var dateMonthStr = dateMonth.toString();
+    if (dateMonthStr.length == 1) {
+      dateMonthStr = '0' + dateMonthStr;
+    }
+    var dateDay = date.getDate();
+    var dateDayStr = dateDay.toString();
+    if (dateDayStr.length == 1) {
+      dateDayStr = '0' + dateDayStr;
+    }
+    return dateYearStr + dateMonthStr + dateDayStr;
+  }
 
   /**
    * Filter Isotope
