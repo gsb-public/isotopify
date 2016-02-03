@@ -82,11 +82,17 @@
               }
             });
 
+            // Use the label for the placeholder and hide it.
+            var $label = $select.prev('label');
+            $label.hide();
+
             var multipleSelectOptions = {
               width: 180,
               maxHeight: 300,
               selectAll: false,
-              minimumCountSelected: 0
+              minimumCountSelected: 0,
+              countSelected: $label.text(),
+              placeholder: $label.text()
             }
 
             if ($select.hasClass('isotopify-multiple')) {
