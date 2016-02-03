@@ -195,6 +195,7 @@
           $isotopifyFilterDateRangeButton.dateRangePicker({
             startDate: minDateFormatted,
             endDate: maxDateFormatted,
+            //customTopBar: 'Select a date range',
             hoveringTooltip: false,
             setValue: function(s) {
             }
