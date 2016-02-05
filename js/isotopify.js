@@ -239,6 +239,33 @@
           $('.date-picker-wrapper').append($topBar);
 
         }
+
+        /*
+         * Let links set checkboxes.
+         */
+        $('a[href^="' + window.location.origin + window.location.pathname + '"]').each(function() {
+          $link = $(this);
+          // Need to create a faux element so we can parse the url.
+          var a = document.createElement('a');
+          a.href = $link.attr('href');
+
+          // While the link may begin the same as the current url that doesn't
+          // mean it matches. Check for that.
+          if (a.origin + a.pathname == window.location.origin + window.location.pathname && a.search.length) {
+            // Split up the parameters.
+            var parameters = a.search.replace('?', '').split('&');
+
+            // Add a click event that sets the checkboxes and updates the page.
+            $link.click(function(e) {
+              e.preventDefault();
+              for (var key in parameters) {
+                var options = parameters[key].split('=');
+                Drupal.isotopify.setFilter.checkboxes(uniqueID, options[0], options[1].split(','));
+              }
+              Drupal.isotopify.update(uniqueID);
+            });
+          }
+        });
       });
     }
   };
