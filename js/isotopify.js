@@ -175,7 +175,7 @@
           var maxDate = null;
           $isotopeWrapper.find('.isotopify-item').each(function() {
             var $item = $(this);
-            if ($item.data('daterange') != 19691231) {
+            if (parseInt($item.data('daterange')) != 99999999) {
               if (minDate == null || parseInt($item.data('daterange')) < minDate) {
                 minDate = parseInt($item.data('daterange'));
               }
