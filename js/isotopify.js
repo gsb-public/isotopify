@@ -103,7 +103,7 @@
             // Add the multipleSelect library
             $select.multipleSelect(multipleSelectOptions);
 
-            var $applyButton = $('<button class="checkbox-apply">Apply</button>').click(function(e) {
+            var $applyButton = $('<button class="checkbox-apply">' + Drupal.t('Done') + '</button>').click(function(e) {
               e.preventDefault();
               var choices = $select.multipleSelect("getSelects");
               var isotopifyID = $select.data('isotopify-id');
