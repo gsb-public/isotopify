@@ -73,6 +73,7 @@
         if ($isotopifyFilterCheckboxes.length) {
           // Remove unused filter options. This needs to ru
           $isotopifyFilterCheckboxes.each(function() {
+            var checkedOptions = [];
             var $select = $(this);
             filterID = $select.data('isotopify-id');
             $select.find('option').each(function() {
@@ -80,7 +81,17 @@
               if (!$isotopeWrapper.find('.filter--' + filterID + '--' + $option.val()).length) {
                 $option.remove();
               }
+
+              // Also check if the checkbox is checked to set defaults.
+              if ($option.is(':checked')) {
+                checkedOptions.push($option.val());
+              }
             });
+
+            // If we have checked checkboxes the set the defaults.
+            if (checkedOptions.length) {
+              settings.filter.checkboxes[filterID] = checkedOptions;
+            }
 
             // Use the label for the placeholder and hide it.
             var $label = $select.prev('label');
@@ -266,6 +277,8 @@
             });
           }
         });
+
+        Drupal.isotopify.update(uniqueID);
       });
     }
   };
@@ -365,6 +378,14 @@
 
     if (hasPills) {
       $pills.append($clearAllButton);
+      if (settings.filterTitle.length) {
+        $('h2.isotopify-title').text(settings.filterTitle);
+      }
+    }
+    else {
+      if (settings.filterTitle.length) {
+        $('h2.isotopify-title').text(settings.title);
+      }
     }
 
     /**
