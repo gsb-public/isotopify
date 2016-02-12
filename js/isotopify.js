@@ -37,15 +37,9 @@
          */
         if ($isotopifySort.length) {
           var sortData = {};
-          var defaultSort = "";
           $isotopifySort.find('option').each(function() {
             $option = $(this);
             var key = $option.val();
-
-            // Get the default sort value
-            if (!defaultSort.length) {
-              defaultSort = key;
-            }
             sortData[key] = '[data-sort-' + key + ']';
           });
 
@@ -64,12 +58,18 @@
         // Enable isotope
         Drupal.settings.isotopify[uniqueID].grid = $isotopeWrapper.isotope(isotopeProperties);
 
-        defaultSort = Drupal.isotopify.addAdditionalSorts($isotopifySort, defaultSort);
 
-        // Sort by the default sort value.
-        Drupal.settings.isotopify[uniqueID].grid.isotope({
-          sortBy: defaultSort
-        });
+        /**
+         * Handle Default sorting
+         */
+        if ($isotopifySort.length) {
+          var defaultSort = Drupal.isotopify.addAdditionalSorts($isotopifySort, $isotopifySort.val());
+
+          // Sort by the default sort value.
+          Drupal.settings.isotopify[uniqueID].grid.isotope({
+            sortBy: defaultSort
+          });
+        }
 
         /**
          * Handle scroll event for lazy load.
