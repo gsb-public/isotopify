@@ -252,19 +252,25 @@ function isotopify_filters_form($form, &$form_state) {
             ),
           ),
         );
-        //$form['date_range'] = array(
-        //  '#markup' => '<span class="isotopify-filter-daterange">' . $title . '</span>',
-        //);
+
         drupal_add_js(libraries_get_path('moment') . '/moment.js');
         drupal_add_js(libraries_get_path('jquery-date-range-picker') . '/jquery.daterangepicker.js');
         drupal_add_css(libraries_get_path('jquery-date-range-picker') . '/daterangepicker.css');
         break;
       case 'sort':
         $sort_default = !empty($filter['default']) ? $filter['default'] : array_pop($filter['options']);
+        $options = array();
+        $attributes = array();
+        foreach ($filter['options'] as $key => $settings) {
+          $options[$key] = $settings['name'];
+          if (!empty($settings['additional_sort'])) {
+            $attributes['data-isotopify-additional-sort-' . $key] = drupal_json_encode($settings['additional_sort']);
+          }
+        }
         $form['isotopify-title-sort']['sort'] = array(
           '#type' => 'select',
           '#title' => $filter['title'],
-          '#options' => $filter['options'],
+          '#options' => $options,
           '#required' => TRUE,
           '#attributes' => array(
             'class' => array('isotopify-filter-sort'),
@@ -272,6 +278,8 @@ function isotopify_filters_form($form, &$form_state) {
           ),
           '#default_value' => !empty($form_state['values']['sort']) ? $form_state['values']['sort'] : $sort_default,
         );
+
+        $form['isotopify-title-sort']['sort']['#attributes'] = array_merge($form['isotopify-title-sort']['sort']['#attributes'], $attributes);
         break;
     }
   }
