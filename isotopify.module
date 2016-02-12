@@ -136,21 +136,19 @@ function isotopify_prepare($items, $options) {
   }
 
   $parameters = array(
+    'title' => (!empty($options['settings']['title']) ? $options['settings']['title'] : t('All')),
     'isotope_data' => $cards,
     'unique_id' => $unique_id,
     'view_id' => $options['id'],
     'callback' => $options['settings']['callback'],
   );
 
-  $title = (!empty($options['settings']['title']) ? $options['settings']['title'] : t('All'));
+
   if (!empty($options['filters'])) {
-    $form_state = array('method' => 'get', 'filters' => $options['filters'], 'title' => $title, 'redirect' => FALSE);
+    $form_state = array('method' => 'get', 'filters' => $options['filters'], 'redirect' => FALSE);
     $form = drupal_build_form('isotopify_filters', $form_state);
     unset($form['form_build_id']);
     $parameters['filters'] = drupal_render($form);
-  }
-  else {
-    $parameters['title'] = $title;
   }
 
   $output = theme('isotopify_wrapper', $parameters);
@@ -173,10 +171,6 @@ function isotopify_filters_form($form, &$form_state) {
 
   $form['isotopify-title-sort'] = array(
     '#type' => 'container',
-  );
-
-  $form['isotopify-title-sort']['title'] = array(
-    '#markup' => '<h2 class="isotopify-title">' . $form_state['title'] . '</h2>',
   );
 
   foreach ($form_state['filters'] as $id => $filter) {
@@ -267,7 +261,7 @@ function isotopify_filters_form($form, &$form_state) {
             $attributes['data-isotopify-additional-sort-' . $key] = drupal_json_encode($settings['additional_sort']);
           }
         }
-        $form['isotopify-title-sort']['sort'] = array(
+        $form['isotopify-sort']['sort'] = array(
           '#type' => 'select',
           '#title' => $filter['title'],
           '#options' => $options,
@@ -279,7 +273,7 @@ function isotopify_filters_form($form, &$form_state) {
           '#default_value' => !empty($form_state['values']['sort']) ? $form_state['values']['sort'] : $sort_default,
         );
 
-        $form['isotopify-title-sort']['sort']['#attributes'] = array_merge($form['isotopify-title-sort']['sort']['#attributes'], $attributes);
+        $form['isotopify-sort']['sort']['#attributes'] = array_merge($form['isotopify-sort']['sort']['#attributes'], $attributes);
         break;
     }
   }

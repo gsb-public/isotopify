@@ -343,7 +343,7 @@
 
     if (!$pills.length) {
       $pills = $('<div class="pills"></div>');
-      $('#isotopify').prepend($pills);
+      $('#isotopify h2.isotopify-title').after($pills);
     }
 
     // Clear out the pills.
