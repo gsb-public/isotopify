@@ -292,6 +292,11 @@
           }
         });
 
+        // If there is the filter pane on the page then use it.
+        if ($('#isotopify-filters-pane').length) {
+          $('#isotopify-filters-pane').append($isotopifyFilters.detach());
+        }
+
         Drupal.isotopify.update(uniqueID);
       });
     }

@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function isotopify_ctools_plugin_directory($owner, $plugin_type) {
+  if ($owner == 'ctools') {
+    return "plugins/$plugin_type";
+  }
+}
+
 function isotopify_theme($existing, $type , $theme, $path) {
 
   return array(
