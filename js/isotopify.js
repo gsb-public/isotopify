@@ -297,6 +297,31 @@
           $('#isotopify-filters-pane').append($isotopifyFilters.detach());
         }
 
+        // Add show direct url fields.
+        if ($('body').hasClass('logged-in')) {
+          var $directURLField = $('<input id="direct-url-field" type="text" size=100 />');
+
+          var $linkBuilder = $('<p><a href="#">' + Drupal.t('Show the direct url to this filter') + '</a></p>').click(function(e) {
+            e.preventDefault();
+            var $link = $(this).find('a');
+
+            if ($link.hasClass('open')) {
+              $link.text(Drupal.t('Show the direct url to this filter'));
+              $directURLField.hide();
+            }
+            else {
+              $link.text(Drupal.t('Hide the direct url filed'));
+              $directURLField.show();
+            }
+
+            $link.toggleClass('open');
+          });
+
+          $('#isotopify-filters-pane').prepend($directURLField);
+          $('#isotopify-filters-pane').prepend($linkBuilder);
+          $directURLField.hide();
+        }
+
         Drupal.isotopify.update(uniqueID);
       });
     }
@@ -419,6 +444,38 @@
         $('h2.isotopify-title').text(settings.title);
       }
     }
+
+    // Update the direct url field.
+    if ($('#direct-url-field').length) {
+      var filters = {};
+      $('a.filter-exit').each(function() {
+        var $filter = $(this);
+        if ($filter.data('item-type') == "checkbox") {
+          var key = $filter.data('item-key');
+          var filterID = $filter.data('filter-id');
+          filters[filterID] = filters[filterID] || [];
+          filters[filterID].push(key);
+        }
+      });
+
+      var link = window.location.protocol + '//' + window.location.hostname + window.location.pathname + '?';
+      for (var filterID in filters) {
+        link += filterID + '=';
+
+        for (var key in filters[filterID]) {
+          link += filters[filterID][key];
+          if (key != filters[filterID].length -1) {
+            link += ',';
+          }
+        }
+
+        link += '&';
+      }
+
+      link = link.substring(0, link.length - 1);
+      $('#direct-url-field').val(link);
+    }
+
 
     /**
      * Update Isotope

@@ -192,6 +192,15 @@ function isotopify_filters_form($form, &$form_state) {
         if (!is_array($filter['default'])) {
           $filter['default'] = array();
         }
+
+        // Add default values from the url.
+        $url_id = str_replace('_', '-', $id);
+        if (!empty($_GET[$url_id])) {
+          $urlDefaults = explode(',', $_GET[$url_id]);
+          $urlDefaults = array_map('trim', $urlDefaults);
+          $filter['default'] = array_merge($filter['default'], $urlDefaults);
+        }
+
         $form['filters']['filter_' . $id] = array(
           '#type' => 'select',
           '#title' => $filter['title'],
