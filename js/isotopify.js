@@ -301,7 +301,7 @@
         if ($('body').hasClass('logged-in')) {
           var $directURLField = $('<input id="direct-url-field" type="text" size=100 />');
 
-          var $linkBuilder = $('<p><a href="#">' + Drupal.t('Show the direct url to this filter') + '</a></p>').click(function(e) {
+          var $linkBuilder = $('<p id="direct-url-link"><a href="#">' + Drupal.t('Show the direct url to this filter') + '</a></p>').click(function(e) {
             e.preventDefault();
             var $link = $(this).find('a');
 
@@ -317,6 +317,8 @@
             $link.toggleClass('open');
           });
 
+          $('#direct-url-field').remove();
+          $('#direct-url-link').remove();
           $('#isotopify-filters-pane').prepend($directURLField);
           $('#isotopify-filters-pane').prepend($linkBuilder);
           $directURLField.hide();
