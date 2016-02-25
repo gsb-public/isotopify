@@ -145,11 +145,13 @@ function isotopify_prepare($items, $options) {
   }
 
   $parameters = array(
-    'title' => (!empty($options['settings']['title']) ? $options['settings']['title'] : t('All')),
+    'title' => (!empty($options['settings']['title'])) ? $options['settings']['title'] : t('All'),
     'isotope_data' => $cards,
     'unique_id' => $unique_id,
     'view_id' => $options['id'],
     'callback' => $options['settings']['callback'],
+    'header' => (!empty($options['settings']['header'])) ? $options['settings']['header'] : '',
+    'footer' => (!empty($options['settings']['footer'])) ? $options['settings']['footer'] : '',
   );
 
 

@@ -7,7 +7,9 @@
   <?php if (!empty($title)): ?>
     <h2 class="isotopify-title"><?php print $title; ?></h2>
   <?php endif; ?>
+  <?php print $header; ?>
   <div class="isotopify-wrapper">
     <?php print $isotope_data; ?>
   </div>
+  <?php print $footer; ?>
 </div>
