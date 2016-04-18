@@ -243,6 +243,14 @@ function isotopify_filters_form($form, &$form_state) {
         break;
       case 'date range':
         $title = !empty($filter['title']) ? $filter['title'] : 'Select Date Range';
+        // Add default values from the url.
+        $url_id = str_replace('_', '-', $id);
+        $default_from = '';
+        $default_to = '';
+        if (!empty($_GET[$url_id . '-from']) && !empty($_GET[$url_id . '-to'])) {
+          $default_from = trim($_GET[$url_id . '-from']);
+          $default_to = trim($_GET[$url_id . '-to']);
+        }
         $form['filters']['date_range'] = array(
           '#type' => 'container',
           '#attributes' => array(
@@ -252,7 +260,7 @@ function isotopify_filters_form($form, &$form_state) {
           'date_range_from' => array(
             '#type' => 'textfield',
             '#title' => $filter['date_from_title'],
-            '#default_value' => '',
+            '#default_value' => $default_from,
             '#attributes' => array(
               'class' => array('date-range-field'),
             ),
@@ -260,7 +268,7 @@ function isotopify_filters_form($form, &$form_state) {
           'date_range_to' => array(
             '#type' => 'textfield',
             '#title' => $filter['date_to_title'],
-            '#default_value' => '',
+            '#default_value' => $default_to,
             '#attributes' => array(
               'class' => array('date-range-field'),
             ),

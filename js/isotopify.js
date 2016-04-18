@@ -184,6 +184,15 @@
         settings.filter.daterange.end = '';
         if ($isotopifyFilterDateRange.length) {
 
+          // Get the default value.
+          var dateRangeDefaultBegin = $isotopifyFilterDateRange.find('#edit-date-range-from').val();
+          var dateRangeDefaultEnd = $isotopifyFilterDateRange.find('#edit-date-range-to').val();
+          if (dateRangeDefaultBegin.length && dateRangeDefaultEnd.length) {
+
+            // Set the filter based on the default value.
+            Drupal.isotopify.setFilter.daterange(uniqueID, dateRangeDefaultBegin, dateRangeDefaultEnd);
+          }
+
           // Add the button to the page.
           title = $isotopifyFilterDateRange.data('title');
           var $isotopifyFilterDateRangeButton = $('<button class="isotopify-filter-daterange-button">' + title + '</button>');
@@ -459,6 +468,14 @@
           filters[filterID].push(key);
         }
       });
+
+      // Add the date range
+      if (settings.filter.daterange.begin.length && settings.filter.daterange.end.length) {
+        filters['date-range-from'] = [];
+        filters['date-range-from'].push(settings.filter.daterange.begin);
+        filters['date-range-to'] = [];
+        filters['date-range-to'].push(settings.filter.daterange.end);
+      }
 
       var link = window.location.protocol + '//' + window.location.hostname + window.location.pathname + '?';
       for (var filterID in filters) {
