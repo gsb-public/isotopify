@@ -125,18 +125,17 @@
               multipleSelectOptions.multipleWidth = 220;
             }
 
-            // Add the multipleSelect library
-            $select.multipleSelect(multipleSelectOptions);
+              // Add the multipleSelect library
+              $select.multipleSelect(multipleSelectOptions);
 
-            var $applyButton = $('<button class="checkbox-apply">' + Drupal.t('Done') + '</button>').click(function(e) {
-              e.preventDefault();
-              var choices = $select.multipleSelect("getSelects");
-              var isotopifyID = $select.data('isotopify-id');
-              Drupal.isotopify.setFilter.checkboxes(uniqueID, isotopifyID, choices);
-              $select.parent().find('button.ms-choice').click();
-
-              Drupal.isotopify.update(uniqueID);
-            });
+              var $applyButton = $('<button class="checkbox-apply">' + Drupal.t('Done') + '</button>').click(function (e) {
+                  e.preventDefault();
+                  var choices = $select.multipleSelect("getSelects");
+                  var isotopifyID = $select.data('isotopify-id');
+                  Drupal.isotopify.setFilter.checkboxes(uniqueID, isotopifyID, choices);
+                  $select.parent().find('button.ms-choice').click();
+                  Drupal.isotopify.update(uniqueID);
+              });
 
             var $clearAllButton = $('<button class="checkbox-clear-all">Clear All</button>').click(function(e) {
               e.preventDefault();
@@ -157,10 +156,15 @@
         if ($isotopifySearchInput.length) {
           var $isotopifySearchButton = $isotopifyFilters.find('input.form-submit');
           settings.filter.search.results = null;
+          $('#edit-search--2').keypress(function(e) {
+            if (e.keyCode == 13) {
+              $('#isotopify-filters #edit-submit').click();
+              return false; // prevent the button click from happening
+            }
+          });
 
           $isotopifySearchButton.click(function(e) {
             e.preventDefault();
-
             var text = $isotopifySearchInput.val();
 
             if (text.length) {
