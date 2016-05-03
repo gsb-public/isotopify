@@ -227,11 +227,11 @@ function isotopify_filters_form($form, &$form_state) {
         );
 
         if (!empty($filter['title'])) {
-          $form['search']['search']['#title'] = $filter['title'];
+          $form['filters']['search']['search']['#title'] = $filter['title'];
         }
 
         if (!empty($filter['placeholder'])) {
-          $form['search']['search']['#attributes']['placeholder'] = $form_state['filters']['search']['placeholder'];
+          $form['filters']['search']['search']['#attributes']['placeholder'] = $form_state['filters']['search']['placeholder'];
         }
         break;
       case 'submit':
