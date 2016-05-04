@@ -574,9 +574,11 @@
     var settings = Drupal.settings.isotopify[uniqueID];
 
     if (!beginDate.length || !endDate.length) {
-      $('.isotopify-filter-daterange-button').data('dateRangePicker').clear();
-      settings.filter.daterange.begin = '';
-      settings.filter.daterange.endDateRange = '';
+      if($('.isotopify-filter-daterange-button').length) {
+        $('.isotopify-filter-daterange-button').data('dateRangePicker').clear();
+        settings.filter.daterange.begin = '';
+        settings.filter.daterange.endDateRange = '';
+      }
     }
     else {
       settings.filter.daterange.begin = beginDate;
