@@ -1,25 +1,33 @@
 (function ($) {
   Drupal.behaviors.isotopify = {
     attach: function (context, settings) {
+
+      // We handle Isotope differently depending on the responsive state
+      var responsive = false;
+
+      // Setup only basic Isotope filtering for the responsive side tray
+      if (Modernizr.mq('(max-width: 568px)')) {
+        responsive = true;
+        $('.isotopify').each(function(index) {
+          Drupal.isotopify.initIsotope(this, responsive);
+        });
+        return;
+      }
+
       $('.isotopify').each(function(index) {
+
+        Drupal.isotopify.initIsotope(this, responsive);
+
         $this = $(this);
         var uniqueID = $this.attr('id');
+
         var settings = Drupal.settings.isotopify[uniqueID];
-        settings.filter = settings.filter || {};
-        settings.filter.checkboxes = settings.filter.checkboxes || {};
-        settings.filter.daterange = settings.filter.daterange || {};
-        settings.filter.search = settings.filter.search || {};
+
         var $isotopifyFilters = $this.find('.isotopify-filters');
         var $isotopifyFilterCheckboxes = $isotopifyFilters.find('select.isotopify-filter-checkboxes');
         var $isotopifyFilterDateRange = $isotopifyFilters.find('.isotopify-filter-daterange');
         var $isotopifySort = $isotopifyFilters.find('.isotopify-filter-sort');
         var $isotopeWrapper = $this.find('.isotopify-wrapper');
-
-        // Define default properties for isotope
-        isotopeProperties = {
-          itemSelector: settings.itemSelector,
-          layoutMode: 'fitRows'
-        }
 
         /**
          * Load Lazy Load if needed
@@ -31,33 +39,6 @@
             failure_limit: Math.max($imgs.length - 1, 0)
           });
         }
-
-        /**
-         * Handle Sorting
-         */
-        if ($isotopifySort.length) {
-          var sortData = {};
-          $isotopifySort.find('option').each(function() {
-            $option = $(this);
-            var key = $option.val();
-            sortData[key] = '[data-sort-' + key + ']';
-          });
-
-          isotopeProperties.getSortData = sortData;
-
-          $isotopifySort.change(function() {
-            $sort = $(this);
-            value = $sort.val();
-            value = Drupal.isotopify.addAdditionalSorts($sort, value);
-            Drupal.settings.isotopify[uniqueID].grid.isotope({
-              sortBy: value
-            })
-          });
-        }
-
-        // Enable isotope
-        Drupal.settings.isotopify[uniqueID].grid = $isotopeWrapper.isotope(isotopeProperties);
-
 
         /**
          * Handle Default sorting
@@ -125,17 +106,17 @@
               multipleSelectOptions.multipleWidth = 220;
             }
 
-              // Add the multipleSelect library
-              $select.multipleSelect(multipleSelectOptions);
+            // Add the multipleSelect library
+            $select.multipleSelect(multipleSelectOptions);
 
-              var $applyButton = $('<button class="checkbox-apply">' + Drupal.t('Done') + '</button>').click(function (e) {
-                  e.preventDefault();
-                  var choices = $select.multipleSelect("getSelects");
-                  var isotopifyID = $select.data('isotopify-id');
-                  Drupal.isotopify.setFilter.checkboxes(uniqueID, isotopifyID, choices);
-                  $select.parent().find('button.ms-choice').click();
-                  Drupal.isotopify.update(uniqueID);
-              });
+            var $applyButton = $('<button class="checkbox-apply">' + Drupal.t('Done') + '</button>').click(function (e) {
+                e.preventDefault();
+                var choices = $select.multipleSelect("getSelects");
+                var isotopifyID = $select.data('isotopify-id');
+                Drupal.isotopify.setFilter.checkboxes(uniqueID, isotopifyID, choices);
+                $select.parent().find('button.ms-choice').click();
+                Drupal.isotopify.update(uniqueID);
+            });
 
             var $clearAllButton = $('<button class="checkbox-clear-all">Clear All</button>').click(function(e) {
               e.preventDefault();
@@ -344,6 +325,56 @@
 
   Drupal.isotopify = Drupal.isotopify || {};
 
+  Drupal.isotopify.initIsotope = function(self, responsive) {
+
+    $this = $(self);
+    var uniqueID = $this.attr('id');
+    Drupal.settings.isotopify[uniqueID].responsive = responsive;
+    var settings = Drupal.settings.isotopify[uniqueID];
+    settings.filter = settings.filter || {};
+    settings.filter.checkboxes = settings.filter.checkboxes || {};
+    settings.filter.daterange = settings.filter.daterange || {};
+    settings.filter.daterange.begin = [];
+    settings.filter.daterange.end = [];
+    settings.filter.search = settings.filter.search || {};
+    var $isotopifyFilters = $this.find('.isotopify-filters');
+    var $isotopifySort = $isotopifyFilters.find('.isotopify-filter-sort');
+    var $isotopeWrapper = $this.find('.isotopify-wrapper');
+
+    // Define default properties for isotope
+    isotopeProperties = {
+      itemSelector: settings.itemSelector,
+      layoutMode: 'fitRows'
+    };
+
+    /**
+     * Handle Sorting
+     */
+    if ($isotopifySort.length) {
+      var sortData = {};
+      $isotopifySort.find('option').each(function() {
+        $option = $(this);
+        var key = $option.val();
+        sortData[key] = '[data-sort-' + key + ']';
+      });
+
+      isotopeProperties.getSortData = sortData;
+
+      $isotopifySort.change(function() {
+        $sort = $(this);
+        value = $sort.val();
+        value = Drupal.isotopify.addAdditionalSorts($sort, value);
+        Drupal.settings.isotopify[uniqueID].grid.isotope({
+          sortBy: value
+        })
+      });
+    }
+
+    // Enable isotope
+    Drupal.settings.isotopify[uniqueID].grid = $isotopeWrapper.isotope(isotopeProperties);
+
+  }
+
   Drupal.isotopify.convertDateObj = function(date) {
     var dateYear = date.getFullYear();
     var dateYearStr = dateYear.toString();
@@ -379,6 +410,7 @@
    * @param uniqueID
    */
   Drupal.isotopify.update = function(uniqueID) {
+
     var settings = Drupal.settings.isotopify[uniqueID];
 
     /**
@@ -504,6 +536,7 @@
      * Update Isotope
      */
     Drupal.settings.isotopify[uniqueID].grid.isotope({filter: function() {
+
       $this = $(this);
 
       /**
@@ -564,21 +597,24 @@
   Drupal.isotopify.setFilter = Drupal.isotopify.filterSet || {};
 
   Drupal.isotopify.setFilter.checkboxes = function(uniqueID, filterID, choices) {
+
     var settings = Drupal.settings.isotopify[uniqueID];
 
     settings.filter.checkboxes[filterID] = choices;
-    $('#edit-filter-' + filterID).multipleSelect('setSelects', choices);
+    if (!Drupal.settings.isotopify[uniqueID].responsive) {
+      $('#edit-filter-' + filterID).multipleSelect('setSelects', choices);
+    }
   }
 
   Drupal.isotopify.setFilter.daterange = function(uniqueID, beginDate, endDate) {
     var settings = Drupal.settings.isotopify[uniqueID];
 
     if (!beginDate.length || !endDate.length) {
-      if($('.isotopify-filter-daterange-button').length) {
+      if ($('.isotopify-filter-daterange-button').length) {
         $('.isotopify-filter-daterange-button').data('dateRangePicker').clear();
-        settings.filter.daterange.begin = '';
-        settings.filter.daterange.endDateRange = '';
       }
+      settings.filter.daterange.begin = '';
+      settings.filter.daterange.endDateRange = '';
     }
     else {
       settings.filter.daterange.begin = beginDate;
@@ -639,4 +675,5 @@
   Drupal.isotopify.pill.clearCheckbox = function() {
 
   }
+
 })(jQuery);
