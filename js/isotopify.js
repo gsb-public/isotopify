@@ -4,7 +4,7 @@
 
       // We handle Isotope differently depending on the responsive state
       var responsive = false;
-      
+
       // Setup only basic Isotope filtering for the responsive side tray
       if (Modernizr.mq('(max-width: 568px)')) {
         responsive = true;
@@ -431,7 +431,7 @@
     for (var id in settings.filter.checkboxes) {
 
       // If the filter is empty skip it.
-      if (!settings.filter.checkboxes[id].length) {
+      if (settings.filter.checkboxes[id] == null || !settings.filter.checkboxes[id].length) {
         continue;
       }
 
@@ -548,7 +548,7 @@
       for (var id in settings.filter.checkboxes) {
 
         // If the filter is empty skip it.
-        if (!settings.filter.checkboxes[id].length) {
+        if (settings.filter.checkboxes[id] == null || !settings.filter.checkboxes[id].length) {
           continue;
         }
 
