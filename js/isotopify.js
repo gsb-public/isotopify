@@ -431,7 +431,7 @@
     for (var id in settings.filter.checkboxes) {
 
       // If the filter is empty skip it.
-      if (!settings.filter.checkboxes[id].length) {
+      if (settings.filter.checkboxes[id] == null || !settings.filter.checkboxes[id].length) {
         continue;
       }
 
@@ -548,7 +548,7 @@
       for (var id in settings.filter.checkboxes) {
 
         // If the filter is empty skip it.
-        if (!settings.filter.checkboxes[id].length) {
+        if (settings.filter.checkboxes[id] == null || !settings.filter.checkboxes[id].length) {
           continue;
         }
 
