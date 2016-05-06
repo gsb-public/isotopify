@@ -191,7 +191,7 @@ function isotopify_filters_form($form, &$form_state) {
         if (!empty($filter['multiple'])) {
           $classes[] = 'isotopify-multiple';
         }
-        if (!is_array($filter['default'])) {
+        if (!empty($filter['default']) && !is_array($filter['default'])) {
           $filter['default'] = array();
         }
 
@@ -203,6 +203,11 @@ function isotopify_filters_form($form, &$form_state) {
           $filter['default'] = array_merge($filter['default'], $urlDefaults);
         }
 
+        $filter_default = '';
+        if (!empty($filter['default'])) {
+          $filter_default = $filter['default'];
+        }
+
         $form['filters']['filter_' . $id] = array(
           '#type' => 'select',
           '#title' => $filter['title'],
@@ -212,7 +217,7 @@ function isotopify_filters_form($form, &$form_state) {
             'data-isotopify-id' => drupal_html_class($id),
           ),
           '#multiple' => true,
-          '#default_value' => !empty($form_state['values']['filter_' . $id]) ? $form_state['values']['filter_' . $id] : $filter['default'],
+          '#default_value' => !empty($form_state['values']['filter_' . $id]) ? $form_state['values']['filter_' . $id] : $filter_default,
         );
 
         drupal_add_js(drupal_get_path('module', 'isotopify') . '/js/jquery.multiple.select.js');
