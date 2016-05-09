@@ -481,6 +481,9 @@
         $(this).attr('checked', false);
       });
 
+      $('#edit-date-range-from').val('');
+      $('#edit-date-range-to').val('');
+
       Drupal.isotopify.update(uniqueID);
     });
 
