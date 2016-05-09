@@ -477,6 +477,10 @@
 
       Drupal.isotopify.setFilter.search(uniqueID, '', null);
 
+      $('#edit-filters input:checked').each(function() {
+        $(this).attr('checked', false);
+      });
+
       Drupal.isotopify.update(uniqueID);
     });
 
