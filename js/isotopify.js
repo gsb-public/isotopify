@@ -484,6 +484,10 @@
       $('#edit-date-range-from').val('');
       $('#edit-date-range-to').val('');
 
+      $('#edit-filters input:checked').each(function() {
+        $(this).attr('checked', false);
+      });
+
       Drupal.isotopify.update(uniqueID);
     });
 
