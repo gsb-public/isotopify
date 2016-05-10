@@ -608,13 +608,23 @@
   Drupal.isotopify.setFilter = Drupal.isotopify.filterSet || {};
 
   Drupal.isotopify.setFilter.checkboxes = function(uniqueID, filterID, choices) {
-
     var settings = Drupal.settings.isotopify[uniqueID];
 
     settings.filter.checkboxes[filterID] = choices;
     if (!Drupal.settings.isotopify[uniqueID].responsive) {
       $('#edit-filter-' + filterID).multipleSelect('setSelects', choices);
     }
+    // begin by unchecking all the checkboxes under the filterID
+    $('.form-item-filter-' + filterID + ' input:checked').each(function() {
+      $(this).prop('checked', false);
+    });
+    // now recheck the checkboxes that are in the list of choices under the filterID
+    $('.form-item-filter-' + filterID + ' input').each(function() {
+      if ($.inArray($(this).val(), choices) > -1) {
+        $(this).prop('checked', true);
+      }
+    });
+
   }
 
   Drupal.isotopify.setFilter.daterange = function(uniqueID, beginDate, endDate) {
