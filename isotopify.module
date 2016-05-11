@@ -200,7 +200,12 @@ function isotopify_filters_form($form, &$form_state) {
         if (!empty($_GET[$url_id])) {
           $urlDefaults = explode(',', $_GET[$url_id]);
           $urlDefaults = array_map('trim', $urlDefaults);
-          $filter['default'] = array_merge($filter['default'], $urlDefaults);
+          if (empty($filter_default)) {
+            $filter['default'] = $urlDefaults;
+          }
+          else {
+            $filter['default'] = array_merge($filter['default'], $urlDefaults);
+          }
         }
 
         $filter_default = '';
