@@ -216,7 +216,6 @@
           maxDateObj.setMonth(maxDateObj.getMonth()+1);
           maxDate = Drupal.isotopify.convertDateObj(maxDateObj);
           maxDateFormatted = maxDate.substr(0, 4) + '-' + maxDate.substr(4, 2) + '-' + maxDate.substr(6, 2);
-
           $isotopifyFilterDateRangeButton.dateRangePicker({
             startDate: minDateFormatted,
             endDate: maxDateFormatted,
