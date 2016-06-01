@@ -152,6 +152,7 @@ function isotopify_prepare($items, $options) {
     'callback' => $options['settings']['callback'],
     'header' => (!empty($options['settings']['header'])) ? $options['settings']['header'] : '',
     'footer' => (!empty($options['settings']['footer'])) ? $options['settings']['footer'] : '',
+    'no_results' => (!empty($options['settings']['no_results'])) ? $options['settings']['no_results'] : '',
   );
 
 

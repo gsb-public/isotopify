@@ -9,6 +9,9 @@
   <?php endif; ?>
   <?php print $header; ?>
   <div class="isotopify-wrapper">
+    <div class="no-results-text">
+      <?php print $no_results; ?>
+    </div>
     <?php print $isotope_data; ?>
   </div>
   <?php print $footer; ?>
