@@ -373,6 +373,14 @@
     // Enable isotope
     Drupal.settings.isotopify[uniqueID].grid = $isotopeWrapper.isotope(isotopeProperties);
 
+    Drupal.settings.isotopify[uniqueID].grid.on('arrangeComplete', function (event, filteredItems) {
+      if (filteredItems.length) {
+        $isotopeWrapper.removeClass('no-results');
+      }
+      else {
+        $isotopeWrapper.addClass('no-results');
+      }
+    });
   }
 
   Drupal.isotopify.convertDateObj = function(date) {
