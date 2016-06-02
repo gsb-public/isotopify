@@ -372,7 +372,6 @@
     // Enable isotope
     Drupal.settings.isotopify[uniqueID].grid = $isotopeWrapper.isotope(isotopeProperties);
     Drupal.settings.isotopify[uniqueID].grid.on('arrangeComplete', function (event, filteredItems) {
-
        if (filteredItems.length) {
           $('#' + uniqueID).removeClass('no-results');
         }
