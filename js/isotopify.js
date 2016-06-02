@@ -172,8 +172,8 @@
           // Get the default value.
           var dateRangeDefaultBegin = $isotopifyFilterDateRange.find('#edit-date-range-from').val();
           var dateRangeDefaultEnd = $isotopifyFilterDateRange.find('#edit-date-range-to').val();
-          if (dateRangeDefaultBegin.length && dateRangeDefaultEnd.length) {
 
+          if (dateRangeDefaultBegin && dateRangeDefaultBegin.length && dateRangeDefaultEnd.length) {
             // Set the filter based on the default value.
             Drupal.isotopify.setFilter.daterange(uniqueID, dateRangeDefaultBegin, dateRangeDefaultEnd);
           }
@@ -371,6 +371,15 @@
 
     // Enable isotope
     Drupal.settings.isotopify[uniqueID].grid = $isotopeWrapper.isotope(isotopeProperties);
+    Drupal.settings.isotopify[uniqueID].grid.on('arrangeComplete', function (event, filteredItems) {
+
+       if (filteredItems.length) {
+          $('#' + uniqueID).removeClass('no-results');
+        }
+        else {
+         $('#' + uniqueID).addClass('no-results');
+        }
+    });
 
     Drupal.settings.isotopify[uniqueID].grid.on('arrangeComplete', function (event, filteredItems) {
       if (filteredItems.length) {
@@ -554,7 +563,6 @@
      * Update Isotope
      */
     Drupal.settings.isotopify[uniqueID].grid.isotope({filter: function() {
-
       $this = $(this);
 
       /**
@@ -588,7 +596,7 @@
        */
       daterangeTest = true;
       if (settings.filter.daterange.begin.length && settings.filter.daterange.end.length) {
-        if ($this.data('daterange') >= settings.filter.daterange.begin && $this.data('daterange') <= settings.filter.daterange.end) {
+        if ($this.data('daterange') == 99999999 || ($this.data('daterange') >= settings.filter.daterange.begin && $this.data('daterange') <= settings.filter.daterange.end)) {
           daterangeTest = true;
         }
         else {
@@ -604,16 +612,17 @@
       if (settings.filter.search.results != null) {
         if (!settings.filter.search.results.length || $.inArray(nid.toString(), settings.filter.search.results) == -1) {
           searchTest = false;
+
         }
       }
 
       // Return the result of those tests.
       return checkboxTest && daterangeTest && searchTest;
     }});
+
   }
 
   Drupal.isotopify.setFilter = Drupal.isotopify.filterSet || {};
-
   Drupal.isotopify.setFilter.checkboxes = function(uniqueID, filterID, choices) {
     var settings = Drupal.settings.isotopify[uniqueID];
 
@@ -648,7 +657,6 @@
       settings.filter.daterange.begin = beginDate;
       settings.filter.daterange.end = endDate;
     }
-
   }
 
   Drupal.isotopify.setFilter.search = function(uniqueID, text, results) {

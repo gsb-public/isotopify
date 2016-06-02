@@ -1,0 +1,6 @@
+.isotopify .no-results-text {
+    display: none;
+}
+.isotopify.no-results .no-results-text {
+    display: block;
+}
