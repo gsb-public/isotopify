@@ -8,6 +8,9 @@
     <h2 class="isotopify-title"><?php print $title; ?></h2>
   <?php endif; ?>
   <?php print $header; ?>
+  <div class="no-results-text">
+    <?php print $no_results; ?>
+  </div>
   <div class="isotopify-wrapper">
     <?php print $isotope_data; ?>
   </div>

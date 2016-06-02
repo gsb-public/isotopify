@@ -101,6 +101,7 @@ function isotopify_prepare($items, $options) {
   $unique_id = drupal_html_id('isotopify');
   drupal_add_js(array('isotopify' => array($unique_id => $options['settings'])), 'setting');
   drupal_add_js(drupal_get_path('module', 'isotopify') . '/js/isotopify.js');
+  drupal_add_css(drupal_get_path('module', 'isotopify') . '/css/isotopify.css');
 
   $cards = '';
   foreach ($items as $item) {;
@@ -152,6 +153,7 @@ function isotopify_prepare($items, $options) {
     'callback' => $options['settings']['callback'],
     'header' => (!empty($options['settings']['header'])) ? $options['settings']['header'] : '',
     'footer' => (!empty($options['settings']['footer'])) ? $options['settings']['footer'] : '',
+    'no_results' => (!empty($options['settings']['no_results'])) ? $options['settings']['no_results'] : '',
   );
 
 
