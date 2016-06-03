@@ -146,7 +146,7 @@ function isotopify_prepare($items, $options) {
   }
 
   $parameters = array(
-    'title' => (!empty($options['settings']['title'])) ? $options['settings']['title'] : t('All'),
+    'title' => (!empty($options['settings']['title'])) ? $options['settings']['title'] : '',
     'isotope_data' => $cards,
     'unique_id' => $unique_id,
     'view_id' => $options['id'],
