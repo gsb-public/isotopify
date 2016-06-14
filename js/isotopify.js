@@ -130,39 +130,6 @@
         }
 
         /**
-         * Handle Search Filter
-         */
-        var $isotopifySearchInput = $isotopifyFilters.find('[name=search]');
-
-        if ($isotopifySearchInput.length) {
-          var $isotopifySearchButton = $isotopifyFilters.find('input.form-submit');
-          settings.filter.search.results = null;
-          $('#edit-search--2').keypress(function(e) {
-            if (e.keyCode == 13) {
-              $('#isotopify-filters #edit-submit').click();
-              return false; // prevent the button click from happening
-            }
-          });
-
-          $isotopifySearchButton.click(function(e) {
-            e.preventDefault();
-            var text = $isotopifySearchInput.val();
-
-            if (text.length) {
-              settings.filter.search.term = text;
-              $.getJSON(settings.callback + "/" + text, function(data) {
-                Drupal.settings.isotopify[uniqueID].filter.search.results = data;
-                Drupal.isotopify.update(uniqueID);
-              });
-            }
-            else {
-              settings.filter.search.results = null;
-              Drupal.isotopify.update(uniqueID);
-            }
-          });
-        }
-
-        /**
          * Handle daterange
          */
         settings.filter.daterange.begin = '';
@@ -388,6 +355,45 @@
         $isotopeWrapper.addClass('no-results');
       }
     });
+
+    Drupal.isotopify.initSearchFilter(uniqueID, settings, $isotopifyFilters);
+
+  }
+
+  Drupal.isotopify.initSearchFilter = function(uniqueID, settings, $isotopifyFilters) {
+
+    /**
+     * Handle Search Filter
+     */
+    var $isotopifySearchInput = $isotopifyFilters.find('[name=search]');
+
+    if ($isotopifySearchInput.length) {
+      var $isotopifySearchButton = $isotopifyFilters.find('input.form-submit');
+      settings.filter.search.results = null;
+      $('#edit-search--2').keypress(function(e) {
+        if (e.keyCode == 13) {
+          $('#isotopify-filters #edit-submit').click();
+          return false; // prevent the button click from happening
+        }
+      });
+
+      $isotopifySearchButton.click(function(e) {
+        e.preventDefault();
+        var text = $isotopifySearchInput.val();
+
+        if (text.length) {
+          settings.filter.search.term = text;
+          $.getJSON(settings.callback + "/" + text, function(data) {
+            Drupal.settings.isotopify[uniqueID].filter.search.results = data;
+            Drupal.isotopify.update(uniqueID);
+          });
+        }
+        else {
+          settings.filter.search.results = null;
+          Drupal.isotopify.update(uniqueID);
+        }
+      });
+    }
   }
 
   Drupal.isotopify.convertDateObj = function(date) {
