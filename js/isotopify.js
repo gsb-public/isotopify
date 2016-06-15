@@ -637,12 +637,12 @@
     }
     // begin by unchecking all the checkboxes under the filterID
     $('.form-item-filter-' + filterID + ' input:checked').each(function() {
-      $(this).prop('checked', false);
+      $(this).attr('checked', false);
     });
     // now recheck the checkboxes that are in the list of choices under the filterID
     $('.form-item-filter-' + filterID + ' input').each(function() {
       if ($.inArray($(this).val(), choices) > -1) {
-        $(this).prop('checked', true);
+        $(this).attr('checked', true);
       }
     });
 
