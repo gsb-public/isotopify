@@ -6,7 +6,7 @@
       var responsive = false;
 
       // Setup only basic Isotope filtering for the responsive side tray
-      if (Modernizr.mq('(max-width: 568px)')) {
+      if (Modernizr.mq('(max-width: 920px)')) {
         responsive = true;
         $('.isotopify').each(function(index) {
           Drupal.isotopify.initIsotope(this, responsive);
