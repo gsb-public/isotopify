@@ -173,8 +173,9 @@
           });
 
           var minDateFormatted = minDate.toString().substr(0, 4) + '-' + minDate.toString().substr(4, 2) + '-' + minDate.toString().substr(6, 2);
-          var minDateObj = new Date(minDateFormatted);
-          minDateObj.setMonth(minDateObj.getMonth()-1);
+          //var minDateObj = new Date(minDateFormatted);
+          var minDateObj = new Date();
+          //minDateObj.setMonth(minDateObj.getMonth()-1);
           minDate = Drupal.isotopify.convertDateObj(minDateObj);
           minDateFormatted = minDate.substr(0, 4) + '-' + minDate.substr(4, 2) + '-' + minDate.substr(6, 2);
 
@@ -187,8 +188,20 @@
             startDate: minDateFormatted,
             endDate: maxDateFormatted,
             hoveringTooltip: false,
+            customTopBar:  "Select a Start Date",
             setValue: function(s) {
             }
+          }).bind('datepicker-first-date-selected', function(event, obj) {
+            /* This event will be triggered when first date is selected */
+
+            $("div.custom-top").show();
+            $("div.custom-top").text("Select an End Date");
+
+          }).bind('datepicker-change', function(event, obj) {
+            /* This event will be triggered when second date is selected */
+
+            $("div.custom-top").hide();
+
           }).bind('datepicker-apply',function(event,obj) {
             if (obj.value == '1969-12-31 to 1969-12-31' || obj.date1 == 'Invalid Date' || obj.date2 == 'Invalid Date') {
               Drupal.isotopify.setFilter.daterange(uniqueID, '', '');
@@ -211,6 +224,8 @@
             }
           }).bind('datepicker-opened',function() { // Add classes when the picker is opened
             $(this).removeClass('closed');
+            $("div.custom-top").text("Select a Start Date");
+            $("div.custom-top").show();
             $(this).addClass('open');
           }).bind('datepicker-closed',function() { // Add classes when the picker is closed
             $(this).removeClass('open');
@@ -218,10 +233,12 @@
           });
 
           // Move the close button.
+          var $topBarText = $('.date-picker-wrapper .custom-top').detach();
           var $topBar = $('.date-picker-wrapper .drp_top-bar').detach();
           $topBar.find('.apply-btn').val(Drupal.t('Done'));
           $topBar.find('.default-top').hide();
           $('.date-picker-wrapper').append($topBar);
+          $('.date-picker-wrapper').prepend($topBarText);
 
         }
 
