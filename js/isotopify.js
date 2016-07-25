@@ -41,18 +41,6 @@
         }
 
         /**
-         * Handle Default sorting
-         */
-        if ($isotopifySort.length) {
-          var defaultSort = Drupal.isotopify.addAdditionalSorts($isotopifySort, $isotopifySort.val());
-
-          // Sort by the default sort value.
-          Drupal.settings.isotopify[uniqueID].grid.isotope({
-            sortBy: defaultSort
-          });
-        }
-
-        /**
          * Handle scroll event for lazy load.
          */
         if (typeof settings.lazyLoad !== 'undefined' && settings.lazyLoad) {
@@ -375,6 +363,8 @@
 
     Drupal.isotopify.initSearchFilter(uniqueID, settings, $isotopifyFilters);
 
+    Drupal.isotopify.doDefaultSort(uniqueID, settings, $isotopifySort);
+
   }
 
   Drupal.isotopify.initSearchFilter = function(uniqueID, settings, $isotopifyFilters) {
@@ -410,6 +400,23 @@
           Drupal.isotopify.update(uniqueID);
         }
       });
+    }
+  }
+
+  Drupal.isotopify.doDefaultSort = function(uniqueID, settings, $isotopifySort) {
+    /**
+     * Handle Default sorting
+     */
+    if ($isotopifySort.length) {
+
+      debugger;
+      var defaultSort = Drupal.isotopify.addAdditionalSorts($isotopifySort, $isotopifySort.val());
+
+      // Sort by the default sort value.
+      Drupal.settings.isotopify[uniqueID].grid.isotope({
+        sortBy: defaultSort
+      });
+
     }
   }
 
