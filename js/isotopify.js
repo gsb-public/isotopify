@@ -250,13 +250,11 @@
           // Need to create a faux element so we can parse the url.
           var a = document.createElement('a');
           a.href = $link.attr('href');
-
           // While the link may begin the same as the current url that doesn't
           // mean it matches. Check for that.
           if (a.origin + a.pathname == window.location.origin + window.location.pathname && a.search.length) {
             // Split up the parameters.
             var parameters = a.search.replace('?', '').split('&');
-
             // Add a click event that sets the checkboxes and updates the page.
             $link.click(function(e) {
               e.preventDefault();
@@ -293,7 +291,6 @@
 
             $link.toggleClass('open');
           });
-
           $('#direct-url-field').remove();
           $('#direct-url-link').remove();
           $('#isotopify-filters-pane').prepend($directURLField);
@@ -560,6 +557,10 @@
         filters['date-range-from'].push(settings.filter.daterange.begin);
         filters['date-range-to'] = [];
         filters['date-range-to'].push(settings.filter.daterange.end);
+      }
+      if (settings.filter.search.term && settings.filter.search.term.length) {
+       filters['search'] = [];
+       filters['search'].push(settings.filter.search.term);
       }
 
       var link = window.location.protocol + '//' + window.location.hostname + window.location.pathname + '?';

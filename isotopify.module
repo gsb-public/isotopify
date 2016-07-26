@@ -199,6 +199,7 @@ function isotopify_filters_form($form, &$form_state) {
 
         // Add default values from the url.
         $url_id = str_replace('_', '-', $id);
+        $filter_default = '';
         if (!empty($_GET[$url_id])) {
           $urlDefaults = explode(',', $_GET[$url_id]);
           $urlDefaults = array_map('trim', $urlDefaults);
@@ -209,8 +210,7 @@ function isotopify_filters_form($form, &$form_state) {
             $filter['default'] = array_merge($filter['default'], $urlDefaults);
           }
         }
-
-        $filter_default = '';
+       // $filter_default = '';
         if (!empty($filter['default'])) {
           $filter_default = $filter['default'];
         }
@@ -226,14 +226,14 @@ function isotopify_filters_form($form, &$form_state) {
           '#multiple' => true,
           '#default_value' => !empty($form_state['values']['filter_' . $id]) ? $form_state['values']['filter_' . $id] : $filter_default,
         );
-
         drupal_add_js(drupal_get_path('module', 'isotopify') . '/js/jquery.multiple.select.js');
         drupal_add_css(drupal_get_path('module', 'isotopify') . '/css/multiple-select.css');
         break;
       case 'search':
         $form['filters']['search']['search'] = array(
           '#type' => 'textfield',
-          '#default_value' => !empty($form_state['values']['search']) ? $form_state['values']['search'] : '',
+          //'#default_value' => !empty($form_state['values']['search']) ? $form_state['values']['search'] : '',
+          '#default_value' => !empty($form_state['input']['search']) ? $form_state['input']['search'] : '',
           '#size' => 60,
           '#maxlength' => 128,
         );

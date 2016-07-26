@@ -11,7 +11,6 @@ $plugin = array(
  * Implements hook_PLUGIN_content_type_render().
  */
 function isotopify_filters_content_type_render($subtype, $conf, $panel_args, $context, $incoming) {
-
   return (object) array(
     'content' => array(
       '#markup' => '<div id="isotopify-filters-pane"></div>',
