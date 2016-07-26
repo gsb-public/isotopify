@@ -409,7 +409,6 @@
      */
     if ($isotopifySort.length) {
 
-      debugger;
       var defaultSort = Drupal.isotopify.addAdditionalSorts($isotopifySort, $isotopifySort.val());
 
       // Sort by the default sort value.
