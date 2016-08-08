@@ -275,7 +275,7 @@
               $directURLField.hide();
             }
             else {
-              $link.text(Drupal.t('Hide the direct url filed'));
+              $link.text(Drupal.t('Hide the direct url field'));
               $directURLField.show();
             }
 
@@ -352,14 +352,6 @@
         }
     });
 
-    Drupal.settings.isotopify[uniqueID].grid.on('arrangeComplete', function (event, filteredItems) {
-      if (filteredItems.length) {
-        $isotopeWrapper.removeClass('no-results');
-      }
-      else {
-        $isotopeWrapper.addClass('no-results');
-      }
-    });
 
     Drupal.isotopify.initSearchFilter(uniqueID, settings, $isotopifyFilters);
 
@@ -384,9 +376,24 @@
         }
       });
 
+      var text = $isotopifySearchInput.val();
+
+      if (text.length) {
+        settings.filter.search.term = text;
+        $.getJSON(settings.callback + "/" + text, function(data) {
+          Drupal.settings.isotopify[uniqueID].filter.search.results = data;
+          Drupal.isotopify.update(uniqueID);
+        });
+      }
+      else {
+        settings.filter.search.text = '';
+        settings.filter.search.results = null;
+        Drupal.isotopify.update(uniqueID);
+      }
+
       $isotopifySearchButton.click(function(e) {
         e.preventDefault();
-        var text = $isotopifySearchInput.val();
+        text = $isotopifySearchInput.val();
 
         if (text.length) {
           settings.filter.search.term = text;
@@ -397,6 +404,7 @@
         }
         else {
           settings.filter.search.results = null;
+          Drupal.isotopify.initSearchFilter(uniqueID, settings, $isotopifyFilters);
           Drupal.isotopify.update(uniqueID);
         }
       });
@@ -566,6 +574,11 @@
         filters['date-range-from'].push(settings.filter.daterange.begin);
         filters['date-range-to'] = [];
         filters['date-range-to'].push(settings.filter.daterange.end);
+      }
+      // Add search term
+      if (settings.filter.search.term) {
+        filters['search'] = [];
+        filters['search'].push(settings.filter.search.term);
       }
 
       var link = window.location.protocol + '//' + window.location.hostname + window.location.pathname + '?';

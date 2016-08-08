@@ -199,6 +199,7 @@ function isotopify_filters_form($form, &$form_state) {
 
         // Add default values from the url.
         $url_id = str_replace('_', '-', $id);
+        $filter_default = '';
         if (!empty($_GET[$url_id])) {
           $urlDefaults = explode(',', $_GET[$url_id]);
           $urlDefaults = array_map('trim', $urlDefaults);
@@ -210,7 +211,6 @@ function isotopify_filters_form($form, &$form_state) {
           }
         }
 
-        $filter_default = '';
         if (!empty($filter['default'])) {
           $filter_default = $filter['default'];
         }
@@ -233,7 +233,7 @@ function isotopify_filters_form($form, &$form_state) {
       case 'search':
         $form['filters']['search']['search'] = array(
           '#type' => 'textfield',
-          '#default_value' => !empty($form_state['values']['search']) ? $form_state['values']['search'] : '',
+          '#default_value' => !empty($form_state['input']['search']) ? $form_state['input']['search'] : '',
           '#size' => 60,
           '#maxlength' => 128,
         );
