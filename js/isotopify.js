@@ -20,9 +20,7 @@
 
         $this = $(this);
         var uniqueID = $this.attr('id');
-
         var settings = Drupal.settings.isotopify[uniqueID];
-
         var $isotopifyFilters = $this.find('.isotopify-filters');
         var $isotopifyFilterCheckboxes = $isotopifyFilters.find('select.isotopify-filter-checkboxes');
         var $isotopifyFilterDateRange = $isotopifyFilters.find('.isotopify-filter-daterange');
