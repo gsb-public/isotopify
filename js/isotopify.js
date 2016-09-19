@@ -236,19 +236,40 @@
           // Need to create a faux element so we can parse the url.
           var a = document.createElement('a');
           a.href = $link.attr('href');
-
           // While the link may begin the same as the current url that doesn't
           // mean it matches. Check for that.
           if (a.origin + a.pathname == window.location.origin + window.location.pathname && a.search.length) {
             // Split up the parameters.
             var parameters = a.search.replace('?', '').split('&');
 
-            // Add a click event that sets the checkboxes and updates the page.
             $link.click(function(e) {
               e.preventDefault();
+              for (var id in settings.filter.checkboxes) {
+                Drupal.isotopify.setFilter.checkboxes(uniqueID, id, []);
+              }
+              Drupal.isotopify.setFilter.daterange(uniqueID, '', '');
+
+              Drupal.isotopify.setFilter.search(uniqueID, '', null);
+              var checked_options = [];
+              var $search_term = '';
               for (var key in parameters) {
                 var options = parameters[key].split('=');
-                Drupal.isotopify.setFilter.checkboxes(uniqueID, options[0], options[1].split(','));
+                if (options[0] == 'search'){
+                  $search_term = options[1];
+                  $isotopifyFilters.find('[name=search]').val($search_term);
+                  settings.filter.search.term = $search_term;
+                  $.getJSON(settings.callback + "/" + $search_term, function (data, settings) {
+                    Drupal.settings.isotopify[uniqueID].filter.search.results = data;
+                    Drupal.isotopify.update(uniqueID);
+                  });
+                } else {
+                 checked_options[options[0]] = options[1];
+                }
+
+              }
+
+              for (var option_key in checked_options) {
+                Drupal.isotopify.setFilter.checkboxes(uniqueID, option_key, checked_options[option_key].split(','));
               }
               Drupal.isotopify.update(uniqueID);
             });
