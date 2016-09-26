@@ -96,12 +96,12 @@
             $select.multipleSelect(multipleSelectOptions);
 
             var $applyButton = $('<button class="checkbox-apply">' + Drupal.t('Done') + '</button>').click(function (e) {
-                e.preventDefault();
-                var choices = $select.multipleSelect("getSelects");
-                var isotopifyID = $select.data('isotopify-id');
-                Drupal.isotopify.setFilter.checkboxes(uniqueID, isotopifyID, choices);
-                $select.parent().find('button.ms-choice').click();
-                Drupal.isotopify.update(uniqueID);
+              e.preventDefault();
+              var choices = $select.multipleSelect("getSelects");
+              var isotopifyID = $select.data('isotopify-id');
+              Drupal.isotopify.setFilter.checkboxes(uniqueID, isotopifyID, choices);
+              $select.parent().find('button.ms-choice').click();
+              Drupal.isotopify.update(uniqueID);
             });
 
             var $clearAllButton = $('<button class="checkbox-clear-all">Clear All</button>').click(function(e) {
@@ -264,7 +264,7 @@
                     Drupal.isotopify.update(uniqueID);
                   });
                 } else {
-                 checked_options[options[0]] = options[1];
+                  checked_options[options[0]] = options[1];
                 }
 
               }
@@ -364,12 +364,12 @@
     // Enable isotope
     Drupal.settings.isotopify[uniqueID].grid = $isotopeWrapper.isotope(isotopeProperties);
     Drupal.settings.isotopify[uniqueID].grid.on('arrangeComplete', function (event, filteredItems) {
-       if (filteredItems.length) {
-          $('#' + uniqueID).removeClass('no-results');
-        }
-        else {
-         $('#' + uniqueID).addClass('no-results');
-        }
+      if (filteredItems.length) {
+        $('#' + uniqueID).removeClass('no-results');
+      }
+      else {
+        $('#' + uniqueID).addClass('no-results');
+      }
     });
 
 
