@@ -250,6 +250,7 @@
               Drupal.isotopify.setFilter.daterange(uniqueID, '', '');
 
               Drupal.isotopify.setFilter.search(uniqueID, '', null);
+              Drupal.isotopify.update(uniqueID);
               var checked_options = [];
               var $search_term = '';
               for (var key in parameters) {
