@@ -96,12 +96,12 @@
             $select.multipleSelect(multipleSelectOptions);
 
             var $applyButton = $('<button class="checkbox-apply">' + Drupal.t('Done') + '</button>').click(function (e) {
-                e.preventDefault();
-                var choices = $select.multipleSelect("getSelects");
-                var isotopifyID = $select.data('isotopify-id');
-                Drupal.isotopify.setFilter.checkboxes(uniqueID, isotopifyID, choices);
-                $select.parent().find('button.ms-choice').click();
-                Drupal.isotopify.update(uniqueID);
+              e.preventDefault();
+              var choices = $select.multipleSelect("getSelects");
+              var isotopifyID = $select.data('isotopify-id');
+              Drupal.isotopify.setFilter.checkboxes(uniqueID, isotopifyID, choices);
+              $select.parent().find('button.ms-choice').click();
+              Drupal.isotopify.update(uniqueID);
             });
 
             var $clearAllButton = $('<button class="checkbox-clear-all">Clear All</button>').click(function(e) {
@@ -246,9 +246,33 @@
             // Add a click event that sets the checkboxes and updates the page.
             $link.click(function(e) {
               e.preventDefault();
+              for (var id in settings.filter.checkboxes) {
+                Drupal.isotopify.setFilter.checkboxes(uniqueID, id, []);
+              }
+              Drupal.isotopify.setFilter.daterange(uniqueID, '', '');
+
+              Drupal.isotopify.setFilter.search(uniqueID, '', null);
+              Drupal.isotopify.update(uniqueID);
+              var checked_options = [];
+              var $search_term = '';
               for (var key in parameters) {
                 var options = parameters[key].split('=');
-                Drupal.isotopify.setFilter.checkboxes(uniqueID, options[0], options[1].split(','));
+                if (options[0] == 'search'){
+                  $search_term = options[1];
+                  $isotopifyFilters.find('[name=search]').val($search_term);
+                  settings.filter.search.term = $search_term;
+                  $.getJSON(settings.callback + "/" + $search_term, function (data, settings) {
+                    Drupal.settings.isotopify[uniqueID].filter.search.results = data;
+                    Drupal.isotopify.update(uniqueID);
+                  });
+                } else {
+                  checked_options[options[0]] = options[1];
+                }
+
+              }
+
+              for (var option_key in checked_options) {
+                Drupal.isotopify.setFilter.checkboxes(uniqueID, option_key, checked_options[option_key].split(','));
               }
               Drupal.isotopify.update(uniqueID);
             });
@@ -342,12 +366,12 @@
     // Enable isotope
     Drupal.settings.isotopify[uniqueID].grid = $isotopeWrapper.isotope(isotopeProperties);
     Drupal.settings.isotopify[uniqueID].grid.on('arrangeComplete', function (event, filteredItems) {
-       if (filteredItems.length) {
-          $('#' + uniqueID).removeClass('no-results');
-        }
-        else {
-         $('#' + uniqueID).addClass('no-results');
-        }
+      if (filteredItems.length) {
+        $('#' + uniqueID).removeClass('no-results');
+      }
+      else {
+        $('#' + uniqueID).addClass('no-results');
+      }
     });
 
 
