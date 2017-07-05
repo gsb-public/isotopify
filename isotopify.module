@@ -288,8 +288,8 @@ function isotopify_filters_form($form, &$form_state) {
         );
 
         drupal_add_js(libraries_get_path('moment') . '/moment.js');
-        drupal_add_js(libraries_get_path('jquery-date-range-picker') . '/src/jquery.daterangepicker.js');
-        drupal_add_css(libraries_get_path('jquery-date-range-picker') . '/src/daterangepicker.css');
+        drupal_add_js(libraries_get_path('jquery-date-range-picker') . '/dist/jquery.daterangepicker.js');
+        drupal_add_css(libraries_get_path('jquery-date-range-picker') . '/dist/daterangepicker.css');
         break;
       case 'sort':
         $sort_default = !empty($filter['default']) ? $filter['default'] : array_pop($filter['options']);
