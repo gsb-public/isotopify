@@ -245,6 +245,8 @@ function isotopify_filters_form($form, &$form_state) {
         if (!empty($filter['placeholder'])) {
           $form['filters']['search']['search']['#attributes']['placeholder'] = $form_state['filters']['search']['placeholder'];
         }
+        if(request_path() == 'exec-ed/programs')
+        $form['filters']['search']['search']['#access'] = FALSE;
         break;
       case 'submit':
         // Submit Button
@@ -252,6 +254,8 @@ function isotopify_filters_form($form, &$form_state) {
           '#type' => 'submit',
           '#value' => $filter['title'],
         );
+        if(request_path() == 'exec-ed/programs')
+        $form['submit']['#access'] = FALSE;
         break;
       case 'date range':
         $title = !empty($filter['title']) ? $filter['title'] : 'Select Date Range';
