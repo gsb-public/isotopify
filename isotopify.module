@@ -189,6 +189,9 @@ function isotopify_filters_form($form, &$form_state) {
   foreach ($form_state['filters'] as $id => $filter) {
     switch ($filter['type']) {
       case 'checkboxes':
+        if(request_path() == 'exec-ed/programs')
+        $classes = array('isotopify-filter-checkboxes','execed-feature-pgm');
+        else
         $classes = array('isotopify-filter-checkboxes');
         if (!empty($filter['multiple'])) {
           $classes[] = 'isotopify-multiple';
@@ -267,10 +270,14 @@ function isotopify_filters_form($form, &$form_state) {
           $default_from = trim($_GET[$url_id . '-from']);
           $default_to = trim($_GET[$url_id . '-to']);
         }
+        if(request_path() == 'exec-ed/programs')
+        $date_range_width_class = 'execed-date-range-width';
+        else
+        $date_range_width_class = '';
         $form['filters']['date_range'] = array(
           '#type' => 'container',
           '#attributes' => array(
-            'class' => array('isotopify-filter-daterange'),
+            'class' => array('isotopify-filter-daterange',$date_range_width_class),
             'data-title' => $title,
           ),
           'date_range_from' => array(
