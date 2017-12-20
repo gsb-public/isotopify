@@ -180,13 +180,14 @@
           }).bind('datepicker-first-date-selected', function(event, obj) {
             /* This event will be triggered when first date is selected */
 
-            $("div.custom-top").show();
+            $("div.custom-top").css("visibility", "visible");
             $("div.custom-top").text("Select an End Date");
 
           }).bind('datepicker-change', function(event, obj) {
             /* This event will be triggered when second date is selected */
 
-            $("div.custom-top").hide();
+            $("div.custom-top").css("visibility", "hidden");
+
 
           }).bind('datepicker-apply',function(event,obj) {
             if (obj.value == '1969-12-31 to 1969-12-31' || obj.date1 == 'Invalid Date' || obj.date2 == 'Invalid Date') {
@@ -211,7 +212,7 @@
           }).bind('datepicker-opened',function() { // Add classes when the picker is opened
             $(this).removeClass('closed');
             $("div.custom-top").text("Select a Start Date");
-            $("div.custom-top").show();
+            $("div.custom-top").css("visibility", "visible");
             $(this).addClass('open');
           }).bind('datepicker-closed',function() { // Add classes when the picker is closed
             $(this).removeClass('open');
