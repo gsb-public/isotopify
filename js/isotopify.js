@@ -9,7 +9,31 @@
       if (Modernizr.mq('(max-width: 920px)')) {
         responsive = true;
         $('.isotopify').each(function(index) {
+          
           Drupal.isotopify.initIsotope(this, responsive);
+          
+          $this = $(this);
+          var $isotopifyFilters = $this.find('.isotopify-filters');
+          var $isotopifyFilterCheckboxes = $isotopifyFilters.find('select.isotopify-filter-checkboxes');
+          var $isotopeWrapper = $this.find('.isotopify-wrapper');
+
+          /**
+           * Handle Checkboxes, to remove unused filter options.
+           */
+          if ($isotopifyFilterCheckboxes.length) {
+            $isotopifyFilterCheckboxes.each(function() {
+              var checkedOptions = [];
+              var $select = $(this);
+              filterID = $select.data('isotopify-id');
+              $select.find('option').each(function () {
+                $option = $(this);
+                if (!$isotopeWrapper.find('.filter--' + filterID + '--' + $option.val()).length) {
+                  $option.remove();
+                }
+              });
+            });
+          }
+          
         });
         return;
       }
