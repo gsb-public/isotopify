@@ -48,7 +48,6 @@
         var $isotopifyFilters = $this.find('.isotopify-filters');
         var $isotopifyFilterCheckboxes = $isotopifyFilters.find('select.isotopify-filter-checkboxes');
         var $isotopifyFilterDateRange = $isotopifyFilters.find('.isotopify-filter-daterange');
-        var $isotopifySort = $isotopifyFilters.find('.isotopify-filter-sort');
         var $isotopeWrapper = $this.find('.isotopify-wrapper');
 
         /**
@@ -355,7 +354,10 @@
     settings.filter.search = settings.filter.search || {};
     var $isotopifyFilters = $this.find('.isotopify-filters');
     var $isotopifySort = $isotopifyFilters.find('.isotopify-filter-sort');
+    var $isotopifySortToggle = $this.find('.isotopify-filter-sort-toggle');
     var $isotopeWrapper = $this.find('.isotopify-wrapper');
+
+    var $isotopifySortToggleVal = function() {return $('.isotopify-filter-sort-toggle span.current').attr('data-value')};
 
     // Define default properties for isotope
     isotopeProperties = {
@@ -363,6 +365,36 @@
       layoutMode: 'fitRows'
     };
 
+    /**
+     * Handle Sorting Toggle
+     */
+    if ($isotopifySortToggle.length) {
+      var sortData = {};
+      $isotopifySortToggle.find('span').each(function () {
+            $option = $(this);
+            var key = $option.attr('data-value');
+            sortData[key] = '[data-sort-' + key + ']';
+          }
+      );
+
+      isotopeProperties.getSortData = sortData;
+
+      $('.isotopify-filter-sort-toggle span.tab-link').click(function () {
+        if (!$(this).hasClass('current')) {
+          var tab_id = $(this).attr('data-tab');
+          $('div.tabs span').removeClass('current');
+          $(this).addClass('current');
+          $("#" + tab_id).addClass('current');
+          $sort = $isotopifySortToggle;
+          value = $isotopifySortToggleVal();
+          value = Drupal.isotopify.addAdditionalSorts($sort, value);
+          Drupal.settings.isotopify[uniqueID].grid.isotope({
+            sortBy: value
+          })
+        }
+      });
+
+    }
     /**
      * Handle Sorting
      */
@@ -372,10 +404,10 @@
         $option = $(this);
         var key = $option.val();
         sortData[key] = '[data-sort-' + key + ']';
-      });
+      }
+      );
 
       isotopeProperties.getSortData = sortData;
-
       $isotopifySort.change(function() {
         $sort = $(this);
         value = $sort.val();
@@ -400,7 +432,9 @@
 
     Drupal.isotopify.initSearchFilter(uniqueID, settings, $isotopifyFilters);
 
-    Drupal.isotopify.doDefaultSort(uniqueID, settings, $isotopifySort);
+    //Drupal.isotopify.doDefaultSort(uniqueID, settings, $isotopifySort);
+
+    Drupal.isotopify.doDefaultSortToggle(uniqueID, settings, $isotopifySortToggle, $isotopifySortToggleVal());
 
   }
 
@@ -463,6 +497,21 @@
     if ($isotopifySort.length) {
 
       var defaultSort = Drupal.isotopify.addAdditionalSorts($isotopifySort, $isotopifySort.val());
+
+      // Sort by the default sort value.
+      Drupal.settings.isotopify[uniqueID].grid.isotope({
+        sortBy: defaultSort
+      });
+
+    }
+  }
+
+  Drupal.isotopify.doDefaultSortToggle = function(uniqueID, settings, $isotopifySortToggle, $isotopifySortToggleVal) {
+    /**
+     * Handle Default sorting
+     */
+    if ($isotopifySortToggle.length) {
+      var defaultSort = Drupal.isotopify.addAdditionalSorts($isotopifySortToggle, $isotopifySortToggleVal);
 
       // Sort by the default sort value.
       Drupal.settings.isotopify[uniqueID].grid.isotope({
